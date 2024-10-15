@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/notesFragment">
+
+    <fragment
+        android:id="@+id/notesFragment"
+        android:name="com.example.simplenotes.NotesFragment"
+        android:label="Notes"
+        tools:layout="@layout/fragment_notes">
+        <action
+            android:id="@+id/action_notesFragment_to_todoFragment"
+            app:destination="@id/todoFragment" />
+        <action
+            android:id="@+id/action_notesFragment_to_todoFragment2"
+            app:destination="@id/todoFragment" />
+        <action
+            android:id="@+id/action_notesFragment_to_todoFragment3"
+            app:destination="@id/todoFragment" />
+        <!-- Add more actions if necessary -->
+    </fragment>
+
+    <fragment
+        android:id="@+id/todoFragment"
+        android:name="com.example.simplenotes.TodoFragment"
+        android:label="Todo"
+        tools:layout="@layout/fragment_todo" >
+        <action
+            android:id="@+id/action_todoFragment_to_notesFragment"
+            app:destination="@id/notesFragment" />
+        <!-- Add more actions if necessary -->
+    </fragment>
+
+</navigation>
