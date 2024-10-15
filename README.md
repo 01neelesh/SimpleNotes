@@ -17,10 +17,10 @@ A modern Android application built with Google Sign-In, SQLite (Room), Fragments
 ## Features 🌟
 - **Google Sign-In:** Authenticate users using Google accounts to ensure secure and simple login.
 - __Note Management:__ Users can: 
-   > * Create new notes.
-   > * Update existing notes.
-   > * Delete notes.
-   > * View all notes in a scrollable list.
+  * Create new notes.
+  * Update existing notes.
+  * Delete notes.
+  * * View all notes in a scrollable list.
 
 - **SQLite with Room:**  Persistent storage of notes using Room, an abstraction over SQLite.
 - **RecyclerView Integration:** Dynamically display notes in a list using a RecyclerView for a smooth user experience.
@@ -37,9 +37,9 @@ A modern Android application built with Google Sign-In, SQLite (Room), Fragments
 
 <a name="setupIntallation"></a>
 ## Getting Started 🚀
- > To Run this project locally, follow the steps below.
 
-
+  To Run this project locally, follow the steps below.
+  
  ### Prerequisites
  - Android Studio (latest version recommended)
  - A valid OAuth 2.0 Client ID for Google Sign-In (from Google Cloud Console)
