@@ -20,7 +20,7 @@ A modern Android application built with Google Sign-In, SQLite (Room), Fragments
   * Create new notes.
   * Update existing notes.
   * Delete notes.
-  * * View all notes in a scrollable list.
+  * View all notes in a scrollable list.
 
 - **SQLite with Room:**  Persistent storage of notes using Room, an abstraction over SQLite.
 - **RecyclerView Integration:** Dynamically display notes in a list using a RecyclerView for a smooth user experience.
