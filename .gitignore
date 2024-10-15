@@ -1,5 +1,7 @@
 *.iml
+
 *.log
+*.google-services.json/
 *.idea/
 .gradle/
 /local.properties
@@ -8,6 +10,7 @@
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
+
 /.idea/assetWizardSettings.xml
 .DS_Store
 *.build/
@@ -18,3 +21,5 @@
 local.properties
 
 *.values.xml/
+
+*.json
