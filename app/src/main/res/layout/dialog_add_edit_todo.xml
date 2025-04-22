@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#e3534c"
+    android:background="@color/light_bg_app"
     android:padding="16dp">
 
     <EditText
@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/enter_todo"
         android:inputType="text"
-        android:textColor="@color/white" />
+        android:textColorHint="@color/hint_txt_clr"
+        android:textColor="@color/secondary_text" />
 
 </RelativeLayout>

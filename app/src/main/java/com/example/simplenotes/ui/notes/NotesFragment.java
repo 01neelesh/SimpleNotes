@@ -1,4 +1,4 @@
-package com.example.simplenotes;
+package com.example.simplenotes.ui.notes;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,6 +23,10 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.simplenotes.R;
+import com.example.simplenotes.viewmodel.NoteViewModel;
+import com.example.simplenotes.data.local.entity.Note;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -32,6 +37,11 @@ public class NotesFragment extends Fragment {
     private NotesAdapter notesAdapter;
     private GestureDetector gestureDetector;
     private NavController navController;
+
+     ExtendedFloatingActionButton addFab;
+     FloatingActionButton fabAddNote, fabAddTodo, fabAddLedger;
+     TextView addNoteText, addTodoText, addLedgerText;
+     boolean isAllFabsVisible;
 
     @SuppressLint("ClickableViewAccessibility")
     @Nullable
@@ -46,7 +56,7 @@ public class NotesFragment extends Fragment {
         notesAdapter = new NotesAdapter(new ArrayList<>());
         recyclerView.setAdapter(notesAdapter);
 
-        noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
+        noteViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication())).get(NoteViewModel.class);
         noteViewModel.getAllNotes().observe(getViewLifecycleOwner(), notes -> {
             notesAdapter.setNotes(notes);
             for (Note note : notes) {
@@ -54,10 +64,49 @@ public class NotesFragment extends Fragment {
             }
         });
 
-        FloatingActionButton fabAddNote = view.findViewById(R.id.fab_add_note);
-        fabAddNote.setOnClickListener(v -> showNoteDialog(null));
+        addFab = view.findViewById(R.id.add_fab);
+        fabAddNote = view.findViewById(R.id.fab_add_note);
+        fabAddTodo = view.findViewById(R.id.fab_add_todo);
+        fabAddLedger = view.findViewById(R.id.fab_add_ledger);
+        addNoteText = view.findViewById(R.id.add_note_text);
+        addTodoText = view.findViewById(R.id.add_todo_text);
+        addLedgerText = view.findViewById(R.id.add_ledger_text);
 
-        FloatingActionButton fabAddTodo = view.findViewById(R.id.fab_add_todo);
+
+        fabAddNote.setVisibility(View.GONE);
+        fabAddTodo.setVisibility(View.GONE);
+        fabAddLedger.setVisibility(View.GONE);
+        addNoteText.setVisibility(View.GONE);
+        addTodoText.setVisibility(View.GONE);
+        addLedgerText.setVisibility(View.GONE);
+        isAllFabsVisible = false;
+        addFab.shrink();
+
+        addFab.setOnClickListener(v -> {
+            if (!isAllFabsVisible) {
+                showSubFabs();
+            } else {
+                hideSubFabs();
+            }
+        });
+
+        fabAddNote.setOnClickListener(v -> showNoteDialog(null));
+        fabAddTodo.setOnClickListener(v -> {
+            Note note = notesAdapter.getSelectedNote();
+            if (note != null) {
+                navigateToTodoFragment(note);
+            } else {
+                navController.navigate(R.id.action_notesFragment_to_todoFragment);
+            }
+        });
+        fabAddLedger.setOnClickListener(v -> {
+            try{
+            navController.navigate(R.id.action_notesFragment_to_ledgerFragment);
+            } catch (IllegalArgumentException e){
+                Toast.makeText(getContext(), "ledger not implemented yet", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         fabAddTodo.setOnClickListener(v -> {
             Note note = notesAdapter.getSelectedNote();
             if (note != null) {
@@ -167,5 +216,43 @@ public class NotesFragment extends Fragment {
             }
             return false;
         }
+    }
+
+    private void showSubFabs() {
+        fabAddNote.setVisibility(View.VISIBLE);
+        fabAddTodo.setVisibility(View.VISIBLE);
+        fabAddLedger.setVisibility(View.VISIBLE);
+        addNoteText.setVisibility(View.VISIBLE);
+        addTodoText.setVisibility(View.VISIBLE);
+        addLedgerText.setVisibility(View.VISIBLE);
+
+        fabAddNote.setTranslationY(150);
+        fabAddTodo.setTranslationY(300);
+        fabAddLedger.setTranslationY(450);
+        addNoteText.setTranslationY(150);
+        addTodoText.setTranslationY(300);
+        addLedgerText.setTranslationY(450);
+
+        fabAddNote.animate().translationY(0).setDuration(200).start();
+        fabAddTodo.animate().translationY(0).setDuration(200).start();
+        fabAddLedger.animate().translationY(0).setDuration(200).start();
+        addNoteText.animate().translationY(0).setDuration(200).start();
+        addTodoText.animate().translationY(0).setDuration(200).start();
+        addLedgerText.animate().translationY(0).setDuration(200).start();
+
+        addFab.extend();
+        isAllFabsVisible = true;
+    }
+
+    private void hideSubFabs() {
+        fabAddNote.animate().translationY(150).setDuration(200).withEndAction(() -> fabAddNote.setVisibility(View.GONE)).start();
+        fabAddTodo.animate().translationY(300).setDuration(200).withEndAction(() -> fabAddTodo.setVisibility(View.GONE)).start();
+        fabAddLedger.animate().translationY(450).setDuration(200).withEndAction(() -> fabAddLedger.setVisibility(View.GONE)).start();
+        addNoteText.animate().translationY(150).setDuration(200).withEndAction(() -> addNoteText.setVisibility(View.GONE)).start();
+        addTodoText.animate().translationY(300).setDuration(200).withEndAction(() -> addTodoText.setVisibility(View.GONE)).start();
+        addLedgerText.animate().translationY(450).setDuration(200).withEndAction(() -> addLedgerText.setVisibility(View.GONE)).start();
+
+        addFab.shrink();
+        isAllFabsVisible = false;
     }
 }

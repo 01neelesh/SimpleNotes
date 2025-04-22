@@ -4,7 +4,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="edit">edit</string>
     <string name="delete">delete</string>
-    <string name="default_web_client_id">put your own api key here </string>
+    <string name="default_web_client_id">193284393391-d1mr6p210s0dns8tipc9v645kcgigne5.apps.googleusercontent.com</string>
     <string name="description">Description</string>
     <string name="title">Title</string>
     <string name="descriptionEdit">Description</string>
@@ -12,4 +12,8 @@
     <string name="save">Save</string>
     <string name="enter_todo">Enter todo</string>
     <string name="add_todo">input todo</string>
+    <string name="add_to_do">Add To-Do</string>
+    <string name="add_ledger">Add Ledger</string>
+    <string name="add_new_note">Add new Note</string>
+    <string name="actions">Actions</string>
 </resources>

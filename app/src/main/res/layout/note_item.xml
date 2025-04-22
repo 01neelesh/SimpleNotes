@@ -3,8 +3,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#E3534C"
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:background="@color/bg_tint_overlay"
     android:orientation="vertical"
     android:padding="8dp">
 
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:padding="8dp"
-        android:textColor="@color/white"
+        android:textColor="@color/secondary_text"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:padding="8dp"
-        android:textColor="@color/white"
+        android:textColor="@color/secondary_text"
         android:textSize="14sp" />
 
     <LinearLayout
@@ -36,32 +36,33 @@
 
         <ImageButton
             android:id="@+id/add_todo"
-            android:layout_width="42dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="2dp"
+            android:backgroundTint="@color/inactive_icon_clr"
             android:background="@drawable/round_shape"
-
             android:contentDescription="@string/add_todo"
-            android:src="@android:drawable/ic_menu_add" />
+            app:srcCompat="@drawable/baseline_add_task_24" />
 
         <ImageButton
             android:id="@+id/button_delete"
-            android:layout_width="42dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="2dp"
+            android:backgroundTint="@color/inactive_icon_clr"
             android:background="@drawable/round_shape"
             android:contentDescription="@string/delete"
-            android:src="@android:drawable/ic_menu_delete" />
+            app:srcCompat="@drawable/baseline_delete_outline_24" />
 
         <ImageButton
             android:id="@+id/button_edit"
-            android:layout_width="42dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="2dp"
+            android:backgroundTint="@color/inactive_icon_clr"
             android:background="@drawable/round_shape"
             android:contentDescription="@string/edit"
-            android:src="@android:drawable/ic_menu_edit" />
-
+            app:srcCompat="@drawable/baseline_edit_24" />
     </LinearLayout>
 
 

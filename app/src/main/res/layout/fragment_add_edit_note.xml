@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFD08E"
+android:background="@color/light_bg_app"
     android:padding="16dp">
 
     <EditText
@@ -13,6 +13,8 @@
         android:layout_marginTop="10dp"
         android:hint="@string/titleEdit"
         android:inputType="text"
+        android:textColorHint="@color/hint_txt_clr"
+        android:textColor="@color/primary_text"
         android:textSize="18sp" />
 
     <EditText
@@ -20,6 +22,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/edit_text_title"
+        android:textColorHint="@color/hint_txt_clr"
+        android:textColor="@color/primary_text"
+        android:padding="1dp"
         android:layout_marginTop="10dp"
         android:hint="@string/descriptionEdit"
         android:inputType="textMultiLine"
@@ -31,6 +36,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/edit_text_description"
         android:layout_centerHorizontal="true"
+
+        android:backgroundTint="@color/ripple_color"
         android:layout_marginTop="20dp"
         android:text="@string/save" />
 

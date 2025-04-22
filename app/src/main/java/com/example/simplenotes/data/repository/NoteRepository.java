@@ -1,8 +1,12 @@
-package com.example.simplenotes;
+package com.example.simplenotes.data.repository;
 
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
+
+import com.example.simplenotes.data.local.NoteDatabase;
+import com.example.simplenotes.data.local.entity.Note;
+import com.example.simplenotes.data.local.dao.NoteDao;
 
 import java.util.List;
 import java.util.concurrent.Executor;

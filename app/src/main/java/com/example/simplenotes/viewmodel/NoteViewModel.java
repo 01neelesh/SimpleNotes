@@ -1,4 +1,4 @@
-package com.example.simplenotes;
+package com.example.simplenotes.viewmodel;
 
 import android.app.Application;
 
@@ -6,6 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
+import com.example.simplenotes.data.repository.NoteRepository;
+import com.example.simplenotes.data.local.entity.Note;
 
 import java.util.List;
 

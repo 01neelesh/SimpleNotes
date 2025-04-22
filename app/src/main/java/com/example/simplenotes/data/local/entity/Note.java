@@ -1,4 +1,4 @@
-package com.example.simplenotes;
+package com.example.simplenotes.data.local.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -19,8 +19,8 @@ import java.util.ArrayList;
 public class Note implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
 
+    private int id;
     private String title;
     private String description;
     private ArrayList<TodoItem> todos; // Changed to ArrayList<TodoItem>

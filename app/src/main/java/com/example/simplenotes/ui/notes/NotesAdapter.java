@@ -1,4 +1,4 @@
-package com.example.simplenotes;
+package com.example.simplenotes.ui.notes;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.simplenotes.R;
+import com.example.simplenotes.data.local.entity.Note;
 
 import java.util.ArrayList;
 import java.util.List;

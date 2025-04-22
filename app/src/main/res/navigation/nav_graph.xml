@@ -6,30 +6,43 @@
 
     <fragment
         android:id="@+id/notesFragment"
-        android:name="com.example.simplenotes.NotesFragment"
+        android:name="com.example.simplenotes.ui.notes.NotesFragment"
         android:label="Notes"
         tools:layout="@layout/fragment_notes">
         <action
             android:id="@+id/action_notesFragment_to_todoFragment"
             app:destination="@id/todoFragment" />
         <action
-            android:id="@+id/action_notesFragment_to_todoFragment2"
-            app:destination="@id/todoFragment" />
-        <action
-            android:id="@+id/action_notesFragment_to_todoFragment3"
-            app:destination="@id/todoFragment" />
+            android:id="@+id/action_notesFragment_to_ledgerFragment"
+            app:destination="@id/ledgerFragment" />
         <!-- Add more actions if necessary -->
     </fragment>
 
     <fragment
         android:id="@+id/todoFragment"
-        android:name="com.example.simplenotes.TodoFragment"
+        android:name="com.example.simplenotes.ui.todo.TodoFragment"
         android:label="Todo"
         tools:layout="@layout/fragment_todo" >
         <action
             android:id="@+id/action_todoFragment_to_notesFragment"
             app:destination="@id/notesFragment" />
+        <action
+            android:id="@+id/action_todoFragment_to_ledgerFragment"
+            app:destination="@id/ledgerFragment" />
         <!-- Add more actions if necessary -->
+    </fragment>
+
+    <fragment
+        android:id="@+id/ledgerFragment"
+        android:name="com.example.simplenotes.ui.ledger.LedgerFragment"
+        android:label="Ledger"
+        tools:layout="@layout/fragment_ledger" >
+        <action
+            android:id="@+id/action_ledgerFragment_to_notesFragment"
+            app:destination="@id/notesFragment" />
+        <action
+            android:id="@+id/action_ledgerFragment_to_todoFragment"
+            app:destination="@id/todoFragment" />
     </fragment>
 
 </navigation>

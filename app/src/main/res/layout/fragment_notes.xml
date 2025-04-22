@@ -1,43 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFD08E">
+  android:background="@color/light_bg_app"
+   >
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/fab_add_note"
-        android:padding="8dp"
+        android:layout_above="@+id/add_fab"
         android:clipToPadding="false"
-        android:background="#FFD08E"
+        android:padding="8dp"
+        android:backgroundTint="@color/light_bg_app"
         android:scrollbars="vertical" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/add_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/bg_tint_btn"
+        app:icon = "@drawable/baseline_add_24"
+        android:text="@string/actions" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_note"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:src="@android:drawable/ic_input_add"
-        android:importantForAccessibility="no" />
+        android:layout_above="@+id/add_fab"
+        android:layout_alignEnd="@+id/add_fab"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/bg_tint_btn"
+        android:importantForAccessibility="no"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/baseline_note_add_24"
+        android:translationY="0dp"
+        />
+
+    <TextView
+        android:id="@+id/add_note_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/fab_add_note"
+        android:layout_alignBottom="@+id/fab_add_note"
+        android:layout_marginEnd="8dp"
+        android:textColor="@color/primary_text"
+        android:layout_toStartOf="@+id/fab_add_note"
+        android:gravity="center_vertical"
+        android:text="@string/add_new_note" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_todo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/fab_add_note"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:src="@android:drawable/ic_input_add"
-        android:importantForAccessibility="no" />
+        android:layout_above="@+id/fab_add_note"
+        android:layout_alignEnd="@+id/fab_add_note"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/bg_tint_btn"
+        android:importantForAccessibility="no"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/baseline_add_task_24" />
+
+    <TextView
+        android:id="@+id/add_todo_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/fab_add_todo"
+        android:layout_alignBottom="@+id/fab_add_todo"
+        android:layout_marginEnd="8dp"
+        android:textColor="@color/primary_text"
+        android:layout_toStartOf="@+id/fab_add_todo"
+        android:gravity="center_vertical"
+        android:text="@string/add_to_do" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_ledger"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/fab_add_todo"
+        android:layout_alignEnd="@+id/fab_add_todo"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/bg_tint_btn"
+        android:importantForAccessibility="no"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/accounting" />
+
+    <TextView
+        android:id="@+id/add_ledger_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/fab_add_ledger"
+        android:layout_alignBottom="@id/fab_add_ledger"
+        android:layout_marginEnd="8dp"
+        android:layout_toStartOf="@id/fab_add_ledger"
+        android:textColor="@color/primary_text"
+        android:gravity="center_vertical"
+        android:text="@string/add_ledger" />
 
 </RelativeLayout>

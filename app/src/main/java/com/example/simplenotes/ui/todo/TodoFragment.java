@@ -1,4 +1,4 @@
-package com.example.simplenotes;
+package com.example.simplenotes.ui.todo;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.simplenotes.R;
+import com.example.simplenotes.data.local.entity.TodoItem;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.example.simplenotes;
+package com.example.simplenotes.ui.notes;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,6 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.example.simplenotes.viewmodel.NoteViewModel;
+import com.example.simplenotes.R;
+import com.example.simplenotes.data.local.entity.Note;
 
 public class AddEditNoteFragment extends Fragment {
     private EditText editTextTitle;

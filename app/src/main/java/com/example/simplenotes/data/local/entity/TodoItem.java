@@ -1,4 +1,4 @@
-package com.example.simplenotes;
+package com.example.simplenotes.data.local.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
