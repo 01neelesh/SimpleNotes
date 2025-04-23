@@ -10,7 +10,7 @@
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
-
+/.problem-report.html
 /.idea/assetWizardSettings.xml
 .DS_Store
 *.build/

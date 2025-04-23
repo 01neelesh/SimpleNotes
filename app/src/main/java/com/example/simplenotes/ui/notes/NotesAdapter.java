@@ -5,13 +5,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.simplenotes.R;
 import com.example.simplenotes.data.local.entity.Note;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +19,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
 
     public interface OnNoteClickListener {
         void onDeleteClick(Note note);
-        void onEditClick(Note note);
-        void onAddTodoClick(Note note);
+        void onNoteClick(Note note);
     }
 
     public void setOnNoteClickListener(OnNoteClickListener listener) {
@@ -64,38 +60,33 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
         return null;
     }
 
+    public Note getNoteAt(int position) {
+        return notes.get(position);
+    }
+
     class NoteViewHolder extends RecyclerView.ViewHolder {
         private final TextView textViewTitle;
         private final TextView textViewDescription;
-        private final ImageButton addTodoButton;
+        private final ImageButton deleteButton;
 
         public NoteViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewTitle = itemView.findViewById(R.id.text_view_title);
             textViewDescription = itemView.findViewById(R.id.text_view_description);
-            addTodoButton = itemView.findViewById(R.id.add_todo);
+            deleteButton = itemView.findViewById(R.id.button_delete);
 
-            ImageButton deleteButton = itemView.findViewById(R.id.button_delete);
-            ImageButton editButton = itemView.findViewById(R.id.button_edit);
+            itemView.setOnClickListener(v -> {
+                int position = getBindingAdapterPosition();
+                if (position != RecyclerView.NO_POSITION && onNoteClickListener != null) {
+                    selectedPosition = position;
+                    onNoteClickListener.onNoteClick(notes.get(position));
+                }
+            });
 
             deleteButton.setOnClickListener(v -> {
-                int position = getAdapterPosition();
+                int position = getBindingAdapterPosition();
                 if (position != RecyclerView.NO_POSITION && onNoteClickListener != null) {
                     onNoteClickListener.onDeleteClick(notes.get(position));
-                }
-            });
-
-            editButton.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && onNoteClickListener != null) {
-                    onNoteClickListener.onEditClick(notes.get(position));
-                }
-            });
-
-            addTodoButton.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && onNoteClickListener != null) {
-                    onNoteClickListener.onAddTodoClick(notes.get(position));
                 }
             });
         }

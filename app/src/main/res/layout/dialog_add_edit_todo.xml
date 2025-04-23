@@ -1,17 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/light_bg_app"
-    android:padding="16dp">
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/light_bg_app">
 
     <EditText
-        android:id="@+id/edit_text_description"
+        android:id="@+id/edit_text_task"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/enter_todo"
+        android:hint="@string/task"
         android:inputType="text"
+        android:textColor="@color/primary_text"
         android:textColorHint="@color/hint_txt_clr"
-        android:textColor="@color/secondary_text" />
+        android:textSize="16sp" />
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/text_reminder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/set_reminder"
+        android:textSize="14sp"
+        android:textColor="@color/primary_text" />
+
+    <TextView
+        android:id="@+id/text_timer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/set_timer"
+        android:textSize="14sp"
+        android:textColor="@color/primary_text" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/button_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:backgroundTint="@color/ripple_color" />
+
+        <Button
+            android:id="@+id/button_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save"
+            android:layout_marginRight="2dp"
+            android:backgroundTint="@color/ripple_color" />
+    </LinearLayout>
+</LinearLayout>

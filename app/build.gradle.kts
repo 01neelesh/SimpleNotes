@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    id ("com.google.gms.google-services")
+//    id ("com.google.gms.google-services")
 }
 
 android {
@@ -58,6 +58,8 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:2.7.0")
     implementation("com.google.code.gson:gson:2.13.0")
 
+//    animation
+    implementation("com.airbnb.android:lottie:6.6.0")
 //    auth
 //    implementation("com.google.android.gms:play-services-auth:21.2.0")
 //    implementation("com.google.android.gms:play-services-auth:21.2.0")

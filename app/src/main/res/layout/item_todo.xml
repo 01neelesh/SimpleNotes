@@ -2,27 +2,43 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:gravity="center_vertical"
     android:orientation="horizontal"
+    android:layout_marginTop="16dp"
     android:padding="8dp">
 
-    <TextView
-        android:id="@+id/tvNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:textSize="18sp"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/tvTodo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:textSize="18sp" />
-
     <CheckBox
-        android:id="@+id/cb_todo_done"
+        android:id="@+id/checkbox_todo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone" />
+        android:layout_marginEnd="8dp" />
+
+    <TextView
+        android:id="@+id/text_view_task"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/primary_text"
+        android:textSize="16sp" />
+
+    <ImageButton
+        android:id="@+id/button_timer"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/set_timer"
+        android:scaleType="fitCenter"
+        android:src="@drawable/stopwatch" />
+
+    <ImageButton
+        android:id="@+id/button_reminder"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="2dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/set_reminder"
+        android:scaleType="fitCenter"
+        android:src="@drawable/notification" />
+
+
 </LinearLayout>

@@ -2,14 +2,14 @@ package com.example.simplenotes.ui.notes;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,11 +21,15 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.simplenotes.R;
-import com.example.simplenotes.viewmodel.NoteViewModel;
 import com.example.simplenotes.data.local.entity.Note;
+import com.example.simplenotes.utils.Constants;
+import com.example.simplenotes.utils.GridSpacingItemDecoration;
+import com.example.simplenotes.utils.SwipeGestureDetector;
+import com.example.simplenotes.viewmodel.NoteViewModel;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -37,11 +41,11 @@ public class NotesFragment extends Fragment {
     private NotesAdapter notesAdapter;
     private GestureDetector gestureDetector;
     private NavController navController;
-
-     ExtendedFloatingActionButton addFab;
-     FloatingActionButton fabAddNote, fabAddTodo, fabAddLedger;
-     TextView addNoteText, addTodoText, addLedgerText;
-     boolean isAllFabsVisible;
+    private ExtendedFloatingActionButton addFab;
+    private FloatingActionButton fabAddNote, fabAddTodo, fabAddLedger;
+    private TextView addNoteText, addTodoText, addLedgerText;
+    private boolean isAllFabsVisible;
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     @SuppressLint("ClickableViewAccessibility")
     @Nullable
@@ -50,11 +54,41 @@ public class NotesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_notes, container, false);
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(Constants.GRID_SPACING_DP));
         recyclerView.setHasFixedSize(true);
 
         notesAdapter = new NotesAdapter(new ArrayList<>());
         recyclerView.setAdapter(notesAdapter);
+
+        ItemTouchHelper.SimpleCallback itemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getBindingAdapterPosition();
+                Note note = notesAdapter.getNoteAt(position);
+                if (direction == ItemTouchHelper.LEFT) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("noteId", note.getId());
+                    navController.navigate(R.id.action_notesFragment_to_todoFragment, bundle);
+                } else if (direction == ItemTouchHelper.RIGHT) {
+                    new AlertDialog.Builder(requireContext())
+                            .setTitle("Delete Note")
+                            .setMessage("Are you sure you want to delete this note?")
+                            .setPositiveButton("Delete", (dialog, which) -> {
+                                noteViewModel.delete(note);
+                                Toast.makeText(getContext(), "Note deleted", Toast.LENGTH_SHORT).show();
+                            })
+                            .setNegativeButton("Cancel", (dialog, which) -> notesAdapter.notifyItemChanged(position))
+                            .show();
+                }
+            }
+        };
+        new ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recyclerView);
 
         noteViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication())).get(NoteViewModel.class);
         noteViewModel.getAllNotes().observe(getViewLifecycleOwner(), notes -> {
@@ -72,7 +106,6 @@ public class NotesFragment extends Fragment {
         addTodoText = view.findViewById(R.id.add_todo_text);
         addLedgerText = view.findViewById(R.id.add_ledger_text);
 
-
         fabAddNote.setVisibility(View.GONE);
         fabAddTodo.setVisibility(View.GONE);
         fabAddLedger.setVisibility(View.GONE);
@@ -85,137 +118,82 @@ public class NotesFragment extends Fragment {
         addFab.setOnClickListener(v -> {
             if (!isAllFabsVisible) {
                 showSubFabs();
+                handler.postDelayed(this::hideSubFabs, Constants.FAB_AUTO_SHRINK_DELAY);
             } else {
                 hideSubFabs();
             }
         });
 
-        fabAddNote.setOnClickListener(v -> showNoteDialog(null));
+        fabAddNote.setOnClickListener(v -> {
+            hideSubFabs();
+            Bundle bundle = new Bundle();
+            navController.navigate(R.id.action_notesFragment_to_addEditNoteFragment, bundle);
+        });
         fabAddTodo.setOnClickListener(v -> {
+            hideSubFabs();
+            Bundle bundle = new Bundle();
             Note note = notesAdapter.getSelectedNote();
-            if (note != null) {
-                navigateToTodoFragment(note);
-            } else {
-                navController.navigate(R.id.action_notesFragment_to_todoFragment);
-            }
+            bundle.putInt("noteId", note != null ? note.getId() : -1);
+            navController.navigate(R.id.action_notesFragment_to_todoFragment, bundle);
         });
         fabAddLedger.setOnClickListener(v -> {
-            try{
-            navController.navigate(R.id.action_notesFragment_to_ledgerFragment);
-            } catch (IllegalArgumentException e){
+            hideSubFabs();
+            try {
+                navController.navigate(R.id.action_notesFragment_to_ledgerFragment);
+            } catch (IllegalArgumentException e) {
                 Toast.makeText(getContext(), "ledger not implemented yet", Toast.LENGTH_SHORT).show();
             }
         });
 
-        fabAddTodo.setOnClickListener(v -> {
-            Note note = notesAdapter.getSelectedNote();
-            if (note != null) {
-                navigateToTodoFragment(note);
-            } else {
-                Toast.makeText(getContext(), "Please select a note first", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Initialize NavController properly
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
 
         notesAdapter.setOnNoteClickListener(new NotesAdapter.OnNoteClickListener() {
             @Override
             public void onDeleteClick(Note note) {
-                noteViewModel.delete(note);
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Delete Note")
+                        .setMessage("Are you sure you want to delete this note?")
+                        .setPositiveButton("Delete", (dialog, which) -> {
+                            noteViewModel.delete(note);
+                            Toast.makeText(getContext(), "Note deleted", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
             }
 
             @Override
-            public void onEditClick(Note note) {
-                showNoteDialog(note);
-            }
-
-            @Override
-            public void onAddTodoClick(Note note) {
-                navigateToTodoFragment(note);
+            public void onNoteClick(Note note) {
+                hideSubFabs();
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("note", note);
+                navController.navigate(R.id.action_notesFragment_to_addEditNoteFragment, bundle);
             }
         });
 
-        gestureDetector = new GestureDetector(getContext(), new SwipeGestureDetector());
-        view.setOnTouchListener((v, event) -> gestureDetector.onTouchEvent(event));
+        gestureDetector = new GestureDetector(getContext(), new SwipeGestureDetector(getContext(), navController));
+        View rootLayout = view.findViewById(R.id.root_layout);
+        rootLayout.setOnTouchListener((v, event) -> {
+            if (isAllFabsVisible && event.getAction() == MotionEvent.ACTION_DOWN) {
+                float x = event.getX();
+                float y = event.getY();
+                if (!isTouchOnFab(fabAddNote, x, y) && !isTouchOnFab(fabAddTodo, x, y) && !isTouchOnFab(fabAddLedger, x, y) && !isTouchOnFab(addFab, x, y)) {
+                    hideSubFabs();
+                }
+            }
+            return gestureDetector.onTouchEvent(event);
+        });
 
         return view;
     }
 
-    private void showNoteDialog(@Nullable final Note note) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
-        LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_add_edit_note, null);
-        dialogBuilder.setView(dialogView);
-
-        final EditText editTextTitle = dialogView.findViewById(R.id.edit_text_title);
-        final EditText editTextDescription = dialogView.findViewById(R.id.edit_text_description);
-
-        if (note != null) {
-            editTextTitle.setText(note.getTitle());
-            editTextDescription.setText(note.getDescription());
-        }
-
-        dialogBuilder.setTitle(note == null ? "Add Note" : "Edit Note");
-        dialogBuilder.setPositiveButton(note == null ? "Add" : "Update", (dialog, which) -> {
-            String title = editTextTitle.getText().toString().trim();
-            String description = editTextDescription.getText().toString().trim();
-
-            if (TextUtils.isEmpty(title) || TextUtils.isEmpty(description)) {
-                Toast.makeText(getContext(), "Please enter both title and description", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (note == null) {
-                Note newNote = new Note();
-                newNote.setTitle(title);
-                newNote.setDescription(description);
-                noteViewModel.insert(newNote);
-                Toast.makeText(getContext(), "Note added", Toast.LENGTH_SHORT).show();
-            } else {
-                note.setTitle(title);
-                note.setDescription(description);
-                noteViewModel.update(note);
-                Toast.makeText(getContext(), "Note updated", Toast.LENGTH_SHORT).show();
-            }
-        });
-        dialogBuilder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
-
-        AlertDialog dialog = dialogBuilder.create();
-        dialog.show();
-    }
-
-    private void navigateToTodoFragment(Note note) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("note", note);
-        navController.navigate(R.id.action_notesFragment_to_todoFragment, bundle);
-    }
-
-    private class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
-        private static final int SWIPE_THRESHOLD = 100;
-        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            try {
-                float diffY = e2.getY() - e1.getY();
-                float diffX = e2.getX() - e1.getX();
-                if (Math.abs(diffX) > Math.abs(diffY)) {
-                    if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                        if (diffX > 0) {
-                            // Right swipe
-                        } else {
-                            // Left swipe
-                            navController.navigate(R.id.action_notesFragment_to_todoFragment);
-                        }
-                        return true;
-                    }
-                }
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-            return false;
-        }
+    private boolean isTouchOnFab(View fab, float x, float y) {
+        int[] location = new int[2];
+        fab.getLocationOnScreen(location);
+        int left = location[0];
+        int top = location[1];
+        int right = left + fab.getWidth();
+        int bottom = top + fab.getHeight();
+        return x >= left && x <= right && y >= top && y <= bottom;
     }
 
     private void showSubFabs() {

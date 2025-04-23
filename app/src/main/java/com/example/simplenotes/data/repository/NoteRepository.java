@@ -4,7 +4,7 @@ import android.app.Application;
 
 import androidx.lifecycle.LiveData;
 
-import com.example.simplenotes.data.local.NoteDatabase;
+import com.example.simplenotes.data.local.AppDatabase;
 import com.example.simplenotes.data.local.entity.Note;
 import com.example.simplenotes.data.local.dao.NoteDao;
 
@@ -19,7 +19,7 @@ public class NoteRepository {
     private final Executor executor;
 
     public NoteRepository(Application application) {
-        NoteDatabase database = NoteDatabase.getInstance(application);
+        AppDatabase database = AppDatabase.getInstance(application);
         noteDao = database.noteDao();
         allNotes = noteDao.getAllNotes();
         executor = Executors.newSingleThreadExecutor();

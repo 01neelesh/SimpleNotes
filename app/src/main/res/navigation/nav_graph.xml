@@ -16,6 +16,21 @@
             android:id="@+id/action_notesFragment_to_ledgerFragment"
             app:destination="@id/ledgerFragment" />
         <!-- Add more actions if necessary -->
+        <action
+            android:id="@+id/action_notesFragment_to_addEditNoteFragment"
+            app:destination="@id/addEditNoteFragment" />
+        <!-- Add more actions if necessary -->
+    </fragment>
+
+    <fragment
+        android:id="@+id/addEditNoteFragment"
+        android:name="com.example.simplenotes.ui.notes.AddEditNoteFragment"
+        android:label="Add Edit"
+        tools:layout="@layout/fragment_add_edit_note">
+
+        <action
+            android:id="@+id/action_addEditNoteFragment_to_notesFragment"
+            app:destination="@id/notesFragment" />
     </fragment>
 
     <fragment

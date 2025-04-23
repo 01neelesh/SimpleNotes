@@ -1,69 +1,66 @@
 package com.example.simplenotes.data.local.entity;
-import android.os.Parcel;
-import android.os.Parcelable;
 
-public class TodoItem implements Parcelable {
-    private String todoText;
-    private boolean done;
-    private boolean dot; // Added for dot logic
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
-    public TodoItem(String todoText, boolean done, boolean dot) {
-        this.todoText = todoText;
-        this.done = done;
-        this.dot = dot;
+@Entity(tableName = "todo_table")
+public class TodoItem {
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+    private String task;
+    private boolean completed;
+    private int noteId;
+    private long reminderTime; // Timestamp for reminder (milliseconds)
+    private long timerDuration; // Duration for timer (milliseconds)
+
+    public TodoItem() {}
+
+    // Getters and Setters
+    public int getId() {
+        return id;
     }
 
-    protected TodoItem(Parcel in) {
-        todoText = in.readString();
-        done = in.readByte() != 0;
-        dot = in.readByte() != 0;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(todoText);
-        dest.writeByte((byte) (done ? 1 : 0));
-        dest.writeByte((byte) (dot ? 1 : 0));
+    public String getTask() {
+        return task;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public void setTask(String task) {
+        this.task = task;
     }
 
-    public static final Creator<TodoItem> CREATOR = new Creator<TodoItem>() {
-        @Override
-        public TodoItem createFromParcel(Parcel in) {
-            return new TodoItem(in);
-        }
-
-        @Override
-        public TodoItem[] newArray(int size) {
-            return new TodoItem[size];
-        }
-    };
-
-    public String getTodoText() {
-        return todoText;
+    public boolean isCompleted() {
+        return completed;
     }
 
-    public void setTodoText(String todoText) {
-        this.todoText = todoText;
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 
-    public boolean isDone() {
-        return done;
+    public int getNoteId() {
+        return noteId;
     }
 
-    public void setDone(boolean done) {
-        this.done = done;
+    public void setNoteId(int noteId) {
+        this.noteId = noteId;
     }
 
-    public boolean isDot() {
-        return dot;
+    public long getReminderTime() {
+        return reminderTime;
     }
 
-    public void setDot(boolean dot) {
-        this.dot = dot;
+    public void setReminderTime(long reminderTime) {
+        this.reminderTime = reminderTime;
+    }
+
+    public long getTimerDuration() {
+        return timerDuration;
+    }
+
+    public void setTimerDuration(long timerDuration) {
+        this.timerDuration = timerDuration;
     }
 }

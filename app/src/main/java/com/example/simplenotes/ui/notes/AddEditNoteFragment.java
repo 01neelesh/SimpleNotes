@@ -1,6 +1,8 @@
 package com.example.simplenotes.ui.notes;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,27 +15,27 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.simplenotes.viewmodel.NoteViewModel;
 import com.example.simplenotes.R;
 import com.example.simplenotes.data.local.entity.Note;
+import com.example.simplenotes.viewmodel.NoteViewModel;
 
 public class AddEditNoteFragment extends Fragment {
     private EditText editTextTitle;
     private EditText editTextDescription;
     private NoteViewModel noteViewModel;
-    private boolean isEditMode = false;
     private Note existingNote;
+    private boolean isEditMode = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Bundle arguments = getArguments();
         if (arguments != null) {
-            // Retrieve the Parcelable Note object
             existingNote = arguments.getParcelable("note");
+            isEditMode = existingNote != null;
         }
     }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -45,40 +47,61 @@ public class AddEditNoteFragment extends Fragment {
 
         noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
 
-        if (getArguments() != null) {
-            if (existingNote != null) {
-                isEditMode = true;
-                editTextTitle.setText(existingNote.getTitle());
-                editTextDescription.setText(existingNote.getDescription());
-            }
+        if (isEditMode) {
+            editTextTitle.setText(existingNote.getTitle());
+            editTextDescription.setText(existingNote.getDescription());
         }
 
-        buttonSave.setOnClickListener(v -> saveNote());
+        // Auto-save on text change
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                saveNote(false);
+            }
+        };
+        editTextTitle.addTextChangedListener(textWatcher);
+        editTextDescription.addTextChangedListener(textWatcher);
+
+        buttonSave.setOnClickListener(v -> {
+            saveNote(true);
+            getParentFragmentManager().popBackStack();
+        });
 
         return view;
     }
 
-    private void saveNote() {
+    private void saveNote(boolean showToast) {
         String title = editTextTitle.getText().toString().trim();
         String description = editTextDescription.getText().toString().trim();
 
         if (title.isEmpty() || description.isEmpty()) {
-            Toast.makeText(getActivity(), "Please insert a title and description", Toast.LENGTH_SHORT).show();
+            if (showToast) {
+                Toast.makeText(requireContext(), "Please insert a title and description", Toast.LENGTH_SHORT).show();
+            }
             return;
         }
 
         if (isEditMode) {
-            assert existingNote != null;
             existingNote.setTitle(title);
             existingNote.setDescription(description);
             noteViewModel.update(existingNote);
+            if (showToast) {
+                Toast.makeText(requireContext(), "Note updated", Toast.LENGTH_SHORT).show();
+            }
         } else {
             Note note = new Note();
             note.setTitle(title);
             note.setDescription(description);
             noteViewModel.insert(note);
+            if (showToast) {
+                Toast.makeText(requireContext(), "Note added", Toast.LENGTH_SHORT).show();
+            }
+            isEditMode = true;
+            existingNote = note;
         }
-
-        getParentFragmentManager().popBackStack();
     }
 }
