@@ -9,30 +9,36 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.example.simplenotes.data.local.dao.LedgerDao;
+import com.example.simplenotes.data.local.dao.LedgerEntryDao;
 import com.example.simplenotes.data.local.dao.NoteDao;
 import com.example.simplenotes.data.local.dao.TodoDao;
+import com.example.simplenotes.data.local.entity.Ledger;
+import com.example.simplenotes.data.local.entity.LedgerEntry;
 import com.example.simplenotes.data.local.entity.Note;
 import com.example.simplenotes.data.local.entity.TodoItem;
 
-@Database(entities = {Note.class, TodoItem.class}, version = 2, exportSchema = false)
+@Database(entities = {Note.class, TodoItem.class, Ledger.class, LedgerEntry.class}, version =  3, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract NoteDao noteDao();
     public abstract TodoDao todoDao();
+    public abstract LedgerDao ledgerDao();
+    public abstract LedgerEntryDao ledgerEntryDao();
 
-    private static volatile AppDatabase instance;
+    private static volatile AppDatabase INSTANCE;
 
     public static synchronized AppDatabase getInstance(Context context) {
-        if (instance == null) {
+        if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
-                instance = Room.databaseBuilder(context.getApplicationContext(),
+                INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                 AppDatabase.class, "simplenotes_database")
-                        .addMigrations(MIGRATION_1_2)
+                        .addMigrations(MIGRATION_1_2,MIGRATION_2_3)
                         .fallbackToDestructiveMigration()
                         .build();
             }
         }
-        return instance;
+        return INSTANCE;
     }
 
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
@@ -41,6 +47,15 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL("ALTER TABLE todo_table ADD COLUMN reminderTime INTEGER NOT NULL DEFAULT 0");
             database.execSQL("ALTER TABLE todo_table ADD COLUMN timerDuration INTEGER NOT NULL DEFAULT 0");
         }
+    };
+
+    static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+        database.execSQL("CREATE TABLE ledger_table (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT NOT NULL, noteId INTEGER NOT NULL)");
+        database.execSQL("CREATE TABLE ledger_entry_table (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, ledgerId INTEGER NOT NULL, date INTEGER NOT NULL, description TEXT , amount TEXT , FOREIGN KEY(ledgerId) REFERENCES ledger_table(id) ON DELETE CASCADE)");
+        }
+
     };
 
 //    static final Migration MIGRATION_2_3 = new Migration(2, 3) {

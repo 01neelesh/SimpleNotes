@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/light_bg_app">
+
+    <EditText
+        android:id="@+id/edit_text_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Date"
+        android:inputType="none"
+        android:textColor="@color/primary_text"
+        android:textColorHint="@color/hint_txt_clr"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/edit_text_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Description"
+        android:inputType="text"
+        android:textColor="@color/primary_text"
+        android:textColorHint="@color/hint_txt_clr"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/edit_text_amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Amount (e.g., +50.00, -20.50)"
+        android:inputType="text"
+        android:textColor="@color/primary_text"
+        android:textColorHint="@color/hint_txt_clr"
+        android:textSize="16sp" />
+
+</LinearLayout>

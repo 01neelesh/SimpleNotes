@@ -58,6 +58,19 @@
         <action
             android:id="@+id/action_ledgerFragment_to_todoFragment"
             app:destination="@id/todoFragment" />
+        <action
+            android:id="@+id/action_ledgerFragment_to_ledgerDetailFragment"
+            app:destination="@id/ledgerDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ledgerDetailFragment"
+        android:name="com.example.simplenotes.ui.ledger.LedgerDetailFragment"
+        tools:layout="@layout/fragment_ledger_detail">
+
+        <action
+            android:id="@+id/action_ledgerDetailFragment_to_ledgerFragment"
+            app:destination="@id/ledgerFragment" />
     </fragment>
 
 </navigation>
