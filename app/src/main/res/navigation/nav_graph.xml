@@ -61,6 +61,9 @@
         <action
             android:id="@+id/action_ledgerFragment_to_ledgerDetailFragment"
             app:destination="@id/ledgerDetailFragment" />
+        <action
+            android:id="@+id/action_ledgerFragment_to_editLedgerFragment"
+            app:destination="@id/editLedgerFragment" />
     </fragment>
 
     <fragment
@@ -70,6 +73,15 @@
 
         <action
             android:id="@+id/action_ledgerDetailFragment_to_ledgerFragment"
+            app:destination="@id/ledgerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editLedgerFragment"
+        android:name="com.example.simplenotes.ui.ledger.EditLedgerFragment"
+        tools:layout="@layout/fragment_edit_ledger">
+        <action
+            android:id="@+id/action_editLedgerFragment_to_ledgerFragment"
             app:destination="@id/ledgerFragment" />
     </fragment>
 

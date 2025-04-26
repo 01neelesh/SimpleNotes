@@ -1,6 +1,7 @@
 package com.example.simplenotes.ui.notes;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -46,12 +47,16 @@ public class NotesFragment extends Fragment {
     private TextView addNoteText, addTodoText, addLedgerText;
     private boolean isAllFabsVisible;
     private final Handler handler = new Handler(Looper.getMainLooper());
+    private SharedPreferences sharedPreferences;
 
     @SuppressLint("ClickableViewAccessibility")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notes, container, false);
+//initialize sharedPreferences
+
+        sharedPreferences = requireContext().getSharedPreferences("SimpleNotesPrefs",0);
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
@@ -71,10 +76,17 @@ public class NotesFragment extends Fragment {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getBindingAdapterPosition();
                 Note note = notesAdapter.getNoteAt(position);
+                Log.d("NotesFragment", "Swiped note ID: " + note.getId() + ", Title: " + note.getTitle());
                 if (direction == ItemTouchHelper.LEFT) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt("lastSwipedNoteId",note.getId());
+                    editor.apply();
+                    Log.d("NotesFragment", "Stored noteId in SharedPrefs: " + note.getId());
+
                     Bundle bundle = new Bundle();
                     bundle.putInt("noteId", note.getId());
-                    navController.navigate(R.id.action_notesFragment_to_todoFragment, bundle);
+                    Log.d("NotesFragment", "Navigating to LedgerFragment with noteId: " + note.getId());
+                    navController.navigate(R.id.action_notesFragment_to_ledgerFragment, bundle); // Updated to ledgerFragment
                 } else if (direction == ItemTouchHelper.RIGHT) {
                     new AlertDialog.Builder(requireContext())
                             .setTitle("Delete Note")
@@ -138,11 +150,15 @@ public class NotesFragment extends Fragment {
         });
         fabAddLedger.setOnClickListener(v -> {
             hideSubFabs();
-            try {
-                navController.navigate(R.id.action_notesFragment_to_ledgerFragment);
-            } catch (IllegalArgumentException e) {
-                Toast.makeText(getContext(), "ledger not implemented yet", Toast.LENGTH_SHORT).show();
+            Note note = notesAdapter.getSelectedNote();
+            if (note == null) {
+                Toast.makeText(getContext(), "Please select a note first", Toast.LENGTH_SHORT).show();
+                return;
             }
+            Bundle bundle = new Bundle();
+            bundle.putInt("noteId", note.getId());
+            Log.d("NotesFragment", "Navigating to LedgerFragment via FAB with noteId: " + note.getId());
+            navController.navigate(R.id.action_notesFragment_to_ledgerFragment, bundle);
         });
 
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);

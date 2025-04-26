@@ -2,9 +2,10 @@ package com.example.simplenotes.data.local.entity;
 
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "ledger_entry_table",
+@Entity(tableName = "ledger_entry_table", indices = {@Index(value = {"ledgerId"})},
         foreignKeys = @ForeignKey(entity = Ledger.class,
                 parentColumns = "id",
                 childColumns = "ledgerId",
@@ -13,9 +14,9 @@ public class LedgerEntry {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private int ledgerId;
-    private long date;
+    private String  date;
     private String description;
-    private String amount;
+    private double amount;
 
     public LedgerEntry() {}
 
@@ -24,10 +25,22 @@ public class LedgerEntry {
     public void setId(int id) { this.id = id; }
     public int getLedgerId() { return ledgerId; }
     public void setLedgerId(int ledgerId) { this.ledgerId = ledgerId; }
-    public long getDate() { return date; }
-    public void setDate(long date) { this.date = date; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-    public String getAmount() { return amount; }
-    public void setAmount(String amount) { this.amount = amount; }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
 }

@@ -1,45 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/light_bg_app">
+    android:background="@color/light_bg_app"
+    android:padding="16dp">
 
-    <TextView
-        android:id="@+id/text_view_ledger_name"
-        android:layout_width="match_parent"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/title_card"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textSize="20sp"
-        android:textColor="@color/primary_text"
-        android:textStyle="bold" />
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/text_view_total"
-        android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/text_view_ledger_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:textColor="@color/primary_text"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:id="@+id/input_layout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textSize="18sp"
-        android:textColor="@color/peach"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_card">
+
+        <EditText
+            android:id="@+id/edit_text_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Date (e.g., 2025-04-26)"
+            android:inputType="none"
+            android:textColor="@color/primary_text"
+            android:textColorHint="@color/hint_txt_clr"
+            android:textSize="16sp"
+            android:padding="8dp" />
+
+        <EditText
+            android:id="@+id/edit_text_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description"
+            android:inputType="text"
+            android:textColor="@color/primary_text"
+            android:textColorHint="@color/hint_txt_clr"
+            android:textSize="16sp"
+            android:padding="8dp" />
+
+        <EditText
+            android:id="@+id/edit_text_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Amount (e.g., +50.00, -20.50)"
+            android:inputType="text"
+            android:textColor="@color/primary_text"
+            android:textColorHint="@color/hint_txt_clr"
+            android:textSize="16sp"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/button_add_entry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="8dp"
+            android:text="Add Entry"
+            android:backgroundTint="@color/bg_tint_btn"
+            android:textColor="@color/primary_text" />
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="8dp"
         android:clipToPadding="false"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@id/total_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/input_layout" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add_entry"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/total_layout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="16dp"
-        android:backgroundTint="@color/bg_tint_btn"
-        app:srcCompat="@drawable/baseline_add_24" />
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/text_view_total_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total: "
+            android:textColor="@color/primary_text"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/text_view_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.00"
+            android:textColor="@color/primary_text"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

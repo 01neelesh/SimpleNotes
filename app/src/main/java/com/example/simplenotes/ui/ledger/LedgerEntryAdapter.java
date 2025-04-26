@@ -5,27 +5,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.simplenotes.R;
 import com.example.simplenotes.data.local.entity.LedgerEntry;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-public class LedgerEntryAdapter extends RecyclerView.Adapter<LedgerEntryAdapter.EntryViewHolder> {
+public class LedgerEntryAdapter extends RecyclerView.Adapter<LedgerEntryAdapter.LedgerEntryViewHolder> {
     private List<LedgerEntry> entries = new ArrayList<>();
 
     @NonNull
     @Override
-    public EntryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ledger_entry, parent, false);
-        return new EntryViewHolder(view);
+    public LedgerEntryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ledger_entry, parent, false);
+        return new LedgerEntryViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EntryViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull LedgerEntryViewHolder holder, int position) {
         LedgerEntry entry = entries.get(position);
         holder.bind(entry);
     }
@@ -35,21 +33,42 @@ public class LedgerEntryAdapter extends RecyclerView.Adapter<LedgerEntryAdapter.
         return entries.size();
     }
 
-    public void setEntries(List<LedgerEntry> entries) {
-        this.entries = entries != null ? entries : new ArrayList<>();
-        notifyDataSetChanged();
+    public void setEntries(List<LedgerEntry> newEntries) {
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return entries.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return newEntries != null ? newEntries.size() : 0;
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                return entries.get(oldItemPosition).getId() == newEntries.get(newItemPosition).getId();
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                LedgerEntry oldEntry = entries.get(oldItemPosition);
+                LedgerEntry newEntry = newEntries.get(newItemPosition);
+                return (oldEntry.getDate() != null ? oldEntry.getDate().equals(newEntry.getDate()) : newEntry.getDate() == null) &&
+                        (oldEntry.getDescription() != null ? oldEntry.getDescription().equals(newEntry.getDescription()) : newEntry.getDescription() == null) &&
+                        oldEntry.getAmount() == newEntry.getAmount();
+            }
+        });
+        this.entries = newEntries != null ? new ArrayList<>(newEntries) : new ArrayList<>();
+        diffResult.dispatchUpdatesTo(this);
     }
 
-    public List<LedgerEntry> getEntries() { // Added: For swipe-to-delete in LedgerDetailFragment
-        return entries;
-    }
-
-    class EntryViewHolder extends RecyclerView.ViewHolder {
+    class LedgerEntryViewHolder extends RecyclerView.ViewHolder {
         private final TextView textViewDate;
         private final TextView textViewDescription;
         private final TextView textViewAmount;
 
-        public EntryViewHolder(@NonNull View itemView) {
+        public LedgerEntryViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewDate = itemView.findViewById(R.id.text_view_date);
             textViewDescription = itemView.findViewById(R.id.text_view_description);
@@ -57,10 +76,9 @@ public class LedgerEntryAdapter extends RecyclerView.Adapter<LedgerEntryAdapter.
         }
 
         public void bind(LedgerEntry entry) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            textViewDate.setText(sdf.format(entry.getDate()));
+            textViewDate.setText(entry.getDate() != null ? entry.getDate() : "");
             textViewDescription.setText(entry.getDescription() != null ? entry.getDescription() : "");
-            textViewAmount.setText(entry.getAmount() != null ? entry.getAmount() : "0.00");
+            textViewAmount.setText(String.format("%.2f", entry.getAmount()));
         }
     }
 }

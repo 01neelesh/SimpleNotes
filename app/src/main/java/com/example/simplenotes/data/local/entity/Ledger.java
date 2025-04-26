@@ -1,11 +1,12 @@
 package com.example.simplenotes.data.local.entity;
 
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import org.jetbrains.annotations.NotNull;
 
-@Entity(tableName = "ledger_table")
+@Entity(tableName = "ledger_table", indices = {@Index(value = {"noteId"})})
 public class Ledger {
     @PrimaryKey(autoGenerate = true)
     private int id;

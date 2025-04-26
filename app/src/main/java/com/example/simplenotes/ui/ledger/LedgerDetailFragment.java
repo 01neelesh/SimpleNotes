@@ -1,115 +1,109 @@
 package com.example.simplenotes.ui.ledger;
 
-import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.simplenotes.R;
 import com.example.simplenotes.data.local.entity.LedgerEntry;
 import com.example.simplenotes.viewmodel.LedgerViewModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
 
 public class LedgerDetailFragment extends Fragment {
     private LedgerViewModel viewModel;
     private LedgerEntryAdapter adapter;
-    private TextView textViewLedgerName;
     private TextView textViewTotal;
+    private EditText editTextDate, editTextDescription, editTextAmount;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_ledger_detail, container, false);
 
-        textViewLedgerName = view.findViewById(R.id.text_view_ledger_name);
-        textViewTotal = view.findViewById(R.id.text_view_total);
+        TextView textViewTitle = view.findViewById(R.id.text_view_ledger_title);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        textViewTotal = view.findViewById(R.id.text_view_total);
+        editTextDate = view.findViewById(R.id.edit_text_date);
+        editTextDescription = view.findViewById(R.id.edit_text_description);
+        editTextAmount = view.findViewById(R.id.edit_text_amount);
+        Button buttonAddEntry = view.findViewById(R.id.button_add_entry);
+
+        // Set current date automatically
+        String currentDate = DateFormat.format("yyyy-MM-dd", Calendar.getInstance().getTime()).toString();
+        editTextDate.setText(currentDate);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerView.setHasFixedSize(true);
         adapter = new LedgerEntryAdapter();
         recyclerView.setAdapter(adapter);
-
-        // Swipe-to-delete
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getBindingAdapterPosition();
-                List<LedgerEntry> entries = adapter.getEntries(); // Fixed: Added getEntries() in LedgerEntryAdapter
-                LedgerEntry entry = entries.get(position);
-                viewModel.delete(entry);
-            }
-        });
-        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         viewModel = new ViewModelProvider(this).get(LedgerViewModel.class);
         int ledgerId = getArguments() != null ? getArguments().getInt("ledgerId", -1) : -1;
         if (ledgerId != -1) {
             viewModel.setCurrentLedgerId(ledgerId);
-            viewModel.getEntriesByLedgerId(ledgerId).observe(getViewLifecycleOwner(), entries -> adapter.setEntries(entries));
-            viewModel.getTotalSum().observe(getViewLifecycleOwner(), total -> {
-                textViewTotal.setText("Total: " + viewModel.formatTotal(total));
+            viewModel.getLedgerById(ledgerId).observe(getViewLifecycleOwner(), ledger -> {
+                if (ledger != null) {
+                    textViewTitle.setText(ledger.getName());
+                }
             });
-            textViewLedgerName.setText("Ledger ID: " + ledgerId); // TODO: Fetch ledger name in Phase 2
+
+            viewModel.getEntriesByLedgerId(ledgerId).observe(getViewLifecycleOwner(), entries -> {
+                adapter.setEntries(entries);
+                updateTotal(ledgerId);
+            });
         }
 
-        FloatingActionButton fab = view.findViewById(R.id.fab_add_entry);
-        fab.setOnClickListener(v -> showAddEntryDialog(ledgerId));
+        buttonAddEntry.setOnClickListener(v -> addEntry(ledgerId));
 
         return view;
     }
 
-    private void showAddEntryDialog(int ledgerId) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_ledger_entry, null);
-        builder.setView(dialogView);
+    private void addEntry(int ledgerId) {
+        String date = editTextDate.getText().toString().trim();
+        String description = editTextDescription.getText().toString().trim();
+        String amountStr = editTextAmount.getText().toString().trim();
 
-        EditText editTextDate = dialogView.findViewById(R.id.edit_text_date);
-        EditText editTextDescription = dialogView.findViewById(R.id.edit_text_description);
-        EditText editTextAmount = dialogView.findViewById(R.id.edit_text_amount);
+        if (date.isEmpty() || description.isEmpty() || amountStr.isEmpty()) {
+            Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        editTextDate.setText(sdf.format(calendar.getTime()));
+        try {
+            double amount = Double.parseDouble(amountStr);
+            LedgerEntry entry = new LedgerEntry();
+            entry.setLedgerId(ledgerId);
+            entry.setDate(date); // Now a String
+            entry.setDescription(description);
+            entry.setAmount(amount);
+            viewModel.insert(entry);
 
-        editTextDate.setOnClickListener(v -> {
-            new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
-                calendar.set(year, month, dayOfMonth);
-                editTextDate.setText(sdf.format(calendar.getTime()));
-            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+            // Reset fields with current date
+            String currentDate = DateFormat.format("yyyy-MM-dd", Calendar.getInstance().getTime()).toString();
+            editTextDate.setText(currentDate);
+            editTextDescription.setText("");
+            editTextAmount.setText("");
+        } catch (NumberFormatException e) {
+            Toast.makeText(requireContext(), "Invalid amount format", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void updateTotal(int ledgerId) {
+        viewModel.getTotalSum(ledgerId).observe(getViewLifecycleOwner(), total -> {
+            textViewTotal.setText(viewModel.formatTotal(total));
         });
-
-        builder.setPositiveButton("Save", (dialog, which) -> {
-            String description = editTextDescription.getText().toString().trim();
-            String amount = editTextAmount.getText().toString().trim();
-            if (!amount.isEmpty()) {
-                LedgerEntry entry = new LedgerEntry();
-                entry.setLedgerId(ledgerId);
-                entry.setDate(calendar.getTimeInMillis());
-                entry.setDescription(description);
-                entry.setAmount(amount);
-                viewModel.insert(entry);
-            }
-        });
-        builder.setNegativeButton("Cancel", null);
-        builder.show();
     }
 }

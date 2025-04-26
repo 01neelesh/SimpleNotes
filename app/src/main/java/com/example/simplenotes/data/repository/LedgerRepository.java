@@ -46,6 +46,11 @@ public class LedgerRepository {
         return ledgerDao.getLedgersByNoteId(noteId);
     }
 
+
+    public LiveData<Ledger> getLedgerById(int ledgerId) {
+        return ledgerDao.getLedgerById(ledgerId);
+    }
+
     public void insert(LedgerEntry entry) {
         executor.execute(() -> ledgerEntryDao.insert(entry));
     }

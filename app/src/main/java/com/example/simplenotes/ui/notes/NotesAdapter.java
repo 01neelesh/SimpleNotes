@@ -27,7 +27,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     }
 
     public NotesAdapter(List<Note> notes) {
-        this.notes = notes != null ? notes : new ArrayList<>();
+        this.notes = new ArrayList<>(); // Always initialize with empty list, per GitHub version
+        if (notes != null) {
+            this.notes.addAll(notes);
+        }
     }
 
     @NonNull
@@ -49,7 +52,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     }
 
     public void setNotes(List<Note> notes) {
-        this.notes = notes != null ? notes : new ArrayList<>();
+        this.notes.clear();
+        this.notes = notes != null ? new ArrayList<>(notes) : new ArrayList<>();
         notifyDataSetChanged();
     }
 
@@ -61,7 +65,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     }
 
     public Note getNoteAt(int position) {
-        return notes.get(position);
+        if (position >= 0 && position < notes.size()) {
+            return notes.get(position);
+        }
+        return null;
     }
 
     class NoteViewHolder extends RecyclerView.ViewHolder {
@@ -92,8 +99,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
         }
 
         public void bind(Note note) {
-            textViewTitle.setText(note.getTitle());
-            textViewDescription.setText(note.getDescription());
+            textViewTitle.setText(note.getTitle() != null && !note.getTitle().isEmpty() ? note.getTitle() : "Untitled");
+            textViewDescription.setText(note.getDescription() != null ? note.getDescription() : "");
         }
     }
 }
