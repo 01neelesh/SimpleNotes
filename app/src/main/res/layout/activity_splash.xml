@@ -10,7 +10,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/splash_gradient_background" />
+        android:background="@drawable/splash_gradient_bg" />
 
     <!-- Main content container -->
     <LinearLayout
@@ -30,7 +30,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/logo_glow_background" />
+                android:background="@drawable/logo_glow_bg" />
 
             <!-- App logo -->
             <ImageView
@@ -70,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Organize your thoughts beautifully"
-            android:textColor="@color/secondary_text"
+            android:textColor="@color/champagne"
             android:textSize="16sp"
             android:fontFamily="@font/poppins_light"
             android:layout_marginBottom="48dp" />
@@ -95,7 +95,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Made with "
-                    android:textColor="@color/secondary_text"
+                    android:textColor="@color/champagne"
                     android:textSize="14sp"
                     android:fontFamily="@font/poppins_regular" />
 
@@ -104,14 +104,14 @@
                     android:id="@+id/heart_icon"
                     android:layout_width="18dp"
                     android:layout_height="18dp"
-                    android:src="@drawable/ic_heart"
+                    android:src="@drawable/heart_icon"
                     app:tint="@color/accent_pink" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=" by"
-                    android:textColor="@color/secondary_text"
+                    android:textColor="@color/champagne"
                     android:textSize="14sp"
                     android:fontFamily="@font/poppins_regular" />
             </LinearLayout>
@@ -121,7 +121,7 @@
                 android:id="@+id/developer_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your Name"
+                android:text=" Neelesh "
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:fontFamily="@font/poppins_medium"
@@ -134,7 +134,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Version 1.0"
-                android:textColor="@color/hint_txt_clr"
+                android:textColor="@color/champagne"
                 android:textSize="12sp"
                 android:fontFamily="@font/poppins_light"
                 android:layout_marginTop="8dp" />

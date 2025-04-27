@@ -18,7 +18,7 @@ import com.example.simplenotes.data.local.entity.LedgerEntry;
 import com.example.simplenotes.data.local.entity.Note;
 import com.example.simplenotes.data.local.entity.TodoItem;
 
-@Database(entities = {Note.class, TodoItem.class, Ledger.class, LedgerEntry.class}, version = 4, exportSchema = false)
+@Database(entities = {Note.class, TodoItem.class, Ledger.class, LedgerEntry.class}, version = 4, exportSchema = true)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract NoteDao noteDao();
     public abstract TodoDao todoDao();
@@ -34,7 +34,6 @@ public abstract class AppDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "simplenotes_database")
                             .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
-                            .fallbackToDestructiveMigration() // Temporary for testing
                             .build();
                 }
             }
@@ -45,7 +44,9 @@ public abstract class AppDatabase extends RoomDatabase {
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
+            // Create ledger_table
             database.execSQL("CREATE TABLE IF NOT EXISTS `ledger_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `noteId` INTEGER NOT NULL)");
+            // Create ledger_entry_table with foreign key constraint
             database.execSQL("CREATE TABLE IF NOT EXISTS `ledger_entry_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `ledgerId` INTEGER NOT NULL, `date` INTEGER NOT NULL, `description` TEXT, `amount` TEXT, FOREIGN KEY(`ledgerId`) REFERENCES `ledger_table`(`id`) ON DELETE CASCADE)");
         }
     };
@@ -53,6 +54,7 @@ public abstract class AppDatabase extends RoomDatabase {
     static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
+            // Add noteId column to todo_item_table with default 0
             database.execSQL("ALTER TABLE todo_item_table ADD COLUMN noteId INTEGER NOT NULL DEFAULT 0");
         }
     };
@@ -60,7 +62,7 @@ public abstract class AppDatabase extends RoomDatabase {
     static final Migration MIGRATION_3_4 = new Migration(3, 4) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            // Add indices to ledger_table and ledger_entry_table
+            // Add indices for better query performance
             database.execSQL("CREATE INDEX IF NOT EXISTS `index_ledger_table_noteId` ON `ledger_table` (`noteId`)");
             database.execSQL("CREATE INDEX IF NOT EXISTS `index_ledger_entry_table_ledgerId` ON `ledger_entry_table` (`ledgerId`)");
         }

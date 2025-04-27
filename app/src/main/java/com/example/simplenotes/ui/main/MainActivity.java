@@ -57,11 +57,12 @@ public class MainActivity extends AppCompatActivity {
                 appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
                 NavigationUI.setupActionBarWithNavController(MainActivity.this, navController, appBarConfiguration);
 
-                // Remove the listener using a fresh ViewTreeObserver
                 findViewById(R.id.nav_host_fragment).getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                // Navigate if not first launch, now that NavController is ready
-                if (!prefs.getBoolean("isFirstLaunch", true)) {
+                // Navigate based on first launch
+                if (isFirstLaunch && navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.onboardingFragment) {
+                    navController.navigate(R.id.onboardingFragment);
+                } else if (!isFirstLaunch) {
                     navigateToNotesIfNotFirstLaunch();
                 }
             }
@@ -69,12 +70,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void navigateToNotesIfNotFirstLaunch() {
-        SharedPreferences prefs = getSharedPreferences("SimpleNotesPrefs", MODE_PRIVATE);
-        boolean isFirstLaunch = prefs.getBoolean("isFirstLaunch", true);
-        if (!isFirstLaunch && navController != null) {
-            // Only navigate if we're not already on notesFragment
-            if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.notesFragment) {
-                navController.navigate(R.id.action_onboardingFragment_to_notesFragment);
+        if (navController != null && navController.getCurrentDestination() != null) {
+            if (navController.getCurrentDestination().getId() != R.id.notesFragment) {
+                navController.navigate(R.id.notesFragment);
             }
         }
     }

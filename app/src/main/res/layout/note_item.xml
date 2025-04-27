@@ -69,6 +69,7 @@
                 android:minWidth="0dp"
                 android:minHeight="0dp"
                 android:padding="8dp"
+
                 app:icon="@drawable/baseline_delete_outline_24"
                 app:iconTint="@color/accent_pink"
                 app:rippleColor="@color/ripple_color"/>

@@ -60,6 +60,9 @@ public class LedgerFragment extends Fragment {
                 navController.navigate(R.id.action_ledgerFragment_to_ledgerDetailFragment, args);
             }
 
+
+
+
             @Override
             public void onEditClick(Ledger ledger) {
                 Bundle args = new Bundle();

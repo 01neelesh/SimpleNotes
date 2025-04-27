@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.simplenotes"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.simplenotes">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -21,20 +19,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SimpleNotes"
         tools:targetApi="31">
-
         <receiver android:name=".ui.todo.ReminderReceiver" />
 
-    <activity android:name=".ui.main.MainActivity"
-        android:theme="@style/Theme.App.SplashScreen"
-        android:windowSoftInputMode="adjustResize"
-            android:exported="true">
+        <activity
+            android:name=".ui.main.SplashActivity"
+            android:exported="true" >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
+        <activity android:name=".ui.main.MainActivity"
+            android:windowSoftInputMode="adjustResize"
+            />
     </application>
+
 
 </manifest>

@@ -2,6 +2,8 @@ package com.example.simplenotes.utils;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Vibrator;
@@ -26,10 +28,13 @@ public class AnimationUtils {
         dialog.setCancelable(false);
 
         LottieAnimationView animationView = dialog.findViewById(R.id.lottie_animation);
+        // START OF MODIFIED SNIPPET
         animationView.setAnimation(R.raw.bin_animation);
+        animationView.setColorFilter(Color.parseColor("#FF5555"), PorterDuff.Mode.SRC_ATOP); // Apply a red tint
         animationView.setRepeatCount(0); // Play once
         animationView.playAnimation();
-        animationView.setContentDescription("Trash bin animation playing");
+        animationView.setContentDescription("Trash bin animation playing with red tint");
+        // END OF MODIFIED SNIPPET
 
         Button btnCancel = dialog.findViewById(R.id.btn_cancel);
         btnCancel.setOnClickListener(v -> dialog.dismiss());
@@ -48,7 +53,6 @@ public class AnimationUtils {
 
         dialog.show();
     }
-
 
     public static void showCheckboxFeedback(View view, boolean isCompleted) {
         LottieAnimationView animationView = view.findViewById(R.id.lottie_feedback);
