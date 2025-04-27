@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_corner"
-    android:orientation="vertical"
     android:backgroundTint="@color/notes_background"
+    android:orientation="vertical"
     android:padding="8dp">
 
     <TextView
@@ -14,13 +14,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:padding="8dp"
-        android:maxLines="2"
-        android:ellipsize="end"
-        android:textColor="@color/champagne"
         android:elevation="4dp"
-        android:textSize="18sp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:padding="8dp"
         android:textAllCaps="true"
+        android:textColor="@color/champagne"
+        android:textSize="18sp"
         android:textStyle="bold" />
 
     <TextView
@@ -28,28 +28,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:maxLines="4"
         android:ellipsize="end"
+        android:maxLines="4"
         android:padding="8dp"
         android:textColor="@color/odd_row"
-        android:textStyle="normal"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textStyle="normal" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="right"
-        android:gravity="end">
+        android:gravity="end"
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/button_delete"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/baseline_delete_outline_24"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/delete" />
+            android:contentDescription="@string/delete"
+            android:scaleType="fitCenter"
+            android:src="@drawable/baseline_delete_outline_24" />
     </LinearLayout>
 
 </LinearLayout>

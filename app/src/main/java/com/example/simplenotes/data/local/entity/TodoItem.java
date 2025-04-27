@@ -9,7 +9,7 @@ public class TodoItem {
     private int id;
     private String task;
     private boolean completed;
-    private int noteId;
+    private Integer noteId; // Changed to Integer to allow null for standalone todos
     private long reminderTime; // Timestamp for reminder (milliseconds)
     private long timerDuration; // Duration for timer (milliseconds)
 
@@ -40,11 +40,11 @@ public class TodoItem {
         this.completed = completed;
     }
 
-    public int getNoteId() {
+    public Integer getNoteId() {
         return noteId;
     }
 
-    public void setNoteId(int noteId) {
+    public void setNoteId(Integer noteId) {
         this.noteId = noteId;
     }
 
@@ -62,5 +62,10 @@ public class TodoItem {
 
     public void setTimerDuration(long timerDuration) {
         this.timerDuration = timerDuration;
+    }
+
+    // New method to check if reminder has expired
+    public boolean isReminderExpired(long currentTime) {
+        return reminderTime > 0 && reminderTime < currentTime && !completed;
     }
 }

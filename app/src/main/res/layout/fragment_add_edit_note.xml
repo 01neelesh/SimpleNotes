@@ -47,8 +47,7 @@
                 android:textColorHint="@color/hint_txt_clr"
                 android:textColor="@color/primary_text"
                 android:textSize="16sp"
-                android:gravity="top"
-                android:minLines="5" />
+                android:gravity="top"/>
 
     </ScrollView>
 

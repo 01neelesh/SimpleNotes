@@ -1,8 +1,7 @@
 package com.example.simplenotes.ui.notes;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,7 @@ import com.example.simplenotes.data.local.entity.Note;
 import com.example.simplenotes.viewmodel.NoteViewModel;
 
 public class AddEditNoteFragment extends Fragment {
+    private static final String TAG = "AddEditNoteFragment";
     private EditText editTextTitle;
     private EditText editTextDescription;
     private NoteViewModel noteViewModel;
@@ -47,24 +47,20 @@ public class AddEditNoteFragment extends Fragment {
 
         noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
 
-        if (isEditMode) {
+        if (isEditMode && existingNote != null) {
             editTextTitle.setText(existingNote.getTitle());
             editTextDescription.setText(existingNote.getDescription());
+            noteViewModel.setCurrentNote(existingNote);
         }
 
-        // Auto-save on text change
-        TextWatcher textWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override
-            public void afterTextChanged(Editable s) {
-                saveNote(false);
+        // Observe the inserted note ID to update the existingNote
+        noteViewModel.getInsertedNoteId().observe(getViewLifecycleOwner(), id -> {
+            if (id != null && existingNote != null && existingNote.getId() == 0) {
+                existingNote.setId(id.intValue());
+                Log.d(TAG, "Updated existingNote ID to: " + id);
+                noteViewModel.setCurrentNote(existingNote);
             }
-        };
-        editTextTitle.addTextChangedListener(textWatcher);
-        editTextDescription.addTextChangedListener(textWatcher);
+        });
 
         buttonSave.setOnClickListener(v -> {
             saveNote(true);
@@ -74,9 +70,16 @@ public class AddEditNoteFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        saveNote(false);
+    }
+
     private void saveNote(boolean showToast) {
         String title = editTextTitle.getText().toString().trim();
         String description = editTextDescription.getText().toString().trim();
+        Log.d(TAG, "Saving note - Title: " + title + ", Description: " + description + ", Length: " + description.length());
 
         if (title.isEmpty() || description.isEmpty()) {
             if (showToast) {
@@ -85,10 +88,11 @@ public class AddEditNoteFragment extends Fragment {
             return;
         }
 
-        if (isEditMode) {
+        if (isEditMode && existingNote != null) {
             existingNote.setTitle(title);
             existingNote.setDescription(description);
             noteViewModel.update(existingNote);
+            Log.d(TAG, "Updated note - ID: " + existingNote.getId() + ", Description: " + existingNote.getDescription());
             if (showToast) {
                 Toast.makeText(requireContext(), "Note updated", Toast.LENGTH_SHORT).show();
             }
@@ -97,6 +101,7 @@ public class AddEditNoteFragment extends Fragment {
             note.setTitle(title);
             note.setDescription(description);
             noteViewModel.insert(note);
+            Log.d(TAG, "Inserted new note - Title: " + note.getTitle() + ", Description: " + note.getDescription());
             if (showToast) {
                 Toast.makeText(requireContext(), "Note added", Toast.LENGTH_SHORT).show();
             }

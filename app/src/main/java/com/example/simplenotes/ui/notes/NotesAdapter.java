@@ -1,5 +1,6 @@
 package com.example.simplenotes.ui.notes;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHolder> {
+    private static final String TAG = "NotesAdapter";
     private List<Note> notes = new ArrayList<>();
     private OnNoteClickListener onNoteClickListener;
     private int selectedPosition = RecyclerView.NO_POSITION;
@@ -27,9 +29,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     }
 
     public NotesAdapter(List<Note> notes) {
-        this.notes = new ArrayList<>(); // Always initialize with empty list, per GitHub version
+        this.notes = new ArrayList<>();
         if (notes != null) {
             this.notes.addAll(notes);
+            for (Note note : this.notes) {
+                Log.d(TAG, "Constructor - Title: " + note.getTitle() + ", Description: " + note.getDescription());
+            }
         }
     }
 
@@ -43,6 +48,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     @Override
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
         Note currentNote = notes.get(position);
+        Log.d(TAG, "Binding note - Position: " + position + ", Title: " + currentNote.getTitle() + ", Description: " + currentNote.getDescription());
         holder.bind(currentNote);
     }
 
@@ -53,7 +59,14 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
 
     public void setNotes(List<Note> notes) {
         this.notes.clear();
-        this.notes = notes != null ? new ArrayList<>(notes) : new ArrayList<>();
+        if (notes != null) {
+            this.notes.addAll(notes);
+            for (Note note : this.notes) {
+                Log.d(TAG, "Set notes - Title: " + note.getTitle() + ", Description: " + (note.getDescription() != null ? note.getDescription() : "null"));
+            }
+        } else {
+            Log.d(TAG, "Set notes - Received null list");
+        }
         notifyDataSetChanged();
     }
 
@@ -100,7 +113,9 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
 
         public void bind(Note note) {
             textViewTitle.setText(note.getTitle() != null && !note.getTitle().isEmpty() ? note.getTitle() : "Untitled");
-            textViewDescription.setText(note.getDescription() != null ? note.getDescription() : "");
+            String description = note.getDescription() != null ? note.getDescription() : "";
+            textViewDescription.setText(description);
+            Log.d(TAG, "Bound description to TextView: " + description);
         }
     }
 }

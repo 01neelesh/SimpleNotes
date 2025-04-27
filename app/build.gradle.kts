@@ -54,6 +54,7 @@ dependencies {
     // Room Persistence Library
     implementation("androidx.room:room-runtime:2.7.1")
     implementation("androidx.core:core-splashscreen:1.2.0-beta02")
+    implementation("androidx.work:work-runtime:2.10.1")
     annotationProcessor("androidx.room:room-compiler:2.7.1")
     implementation("androidx.lifecycle:lifecycle-livedata:2.9.0-rc01")
     // Using -ktx for Kotlin extensions

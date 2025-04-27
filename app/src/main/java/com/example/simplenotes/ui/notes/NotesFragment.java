@@ -37,7 +37,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 public class NotesFragment extends Fragment {
-
+    private static final String TAG = "NotesFragment";
     private NoteViewModel noteViewModel;
     private NotesAdapter notesAdapter;
     private GestureDetector gestureDetector;
@@ -104,11 +104,13 @@ public class NotesFragment extends Fragment {
 
         noteViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication())).get(NoteViewModel.class);
         noteViewModel.getAllNotes().observe(getViewLifecycleOwner(), notes -> {
-            notesAdapter.setNotes(notes);
+            Log.d(TAG, "Observed notes - Count: " + (notes != null ? notes.size() : 0));
             for (Note note : notes) {
-                Log.d("NotesFragment", "Note: " + note.getTitle() + " - " + note.getDescription());
+                Log.d(TAG, "Observed note - ID: " + note.getId() + ", Title: " + note.getTitle() + ", Description: " + note.getDescription());
             }
+            notesAdapter.setNotes(notes);
         });
+
 
         addFab = view.findViewById(R.id.add_fab);
         fabAddNote = view.findViewById(R.id.fab_add_note);
@@ -139,10 +141,10 @@ public class NotesFragment extends Fragment {
         fabAddNote.setOnClickListener(v -> {
             hideSubFabs();
             if (navController.getCurrentDestination().getId() == R.id.notesFragment) {
+                noteViewModel.clearCurrentNote(); // Clear current note before adding a new one
                 Bundle bundle = new Bundle();
                 navController.navigate(R.id.action_notesFragment_to_addEditNoteFragment, bundle);
             } else {
-                // Log or handle the case where navigation isn't possible
                 Toast.makeText(requireContext(), "Please wait, loading notes...", Toast.LENGTH_SHORT).show();
             }
         });

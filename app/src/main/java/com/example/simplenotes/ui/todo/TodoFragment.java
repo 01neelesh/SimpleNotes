@@ -28,15 +28,21 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.simplenotes.R;
 import com.example.simplenotes.data.local.entity.TodoItem;
 import com.example.simplenotes.utils.NotificationHelper;
 import com.example.simplenotes.viewmodel.TodoViewModel;
+import com.example.simplenotes.workers.TodoExpirationWorker;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class TodoFragment extends Fragment {
     private TodoViewModel viewModel;
@@ -45,6 +51,8 @@ public class TodoFragment extends Fragment {
     private LottieAnimationView lottieAnimation;
     private NotificationHelper notificationHelper;
     private AlarmManager alarmManager;
+    private Set<Integer> animatedTodoIds = new HashSet<>();
+    private int currentNoteId = -1;
 
     @Nullable
     @Override
@@ -59,6 +67,11 @@ public class TodoFragment extends Fragment {
         lottieAnimation = view.findViewById(R.id.lottie_animation);
         notificationHelper = new NotificationHelper(requireContext());
         alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+
+        // Schedule expiration worker
+        PeriodicWorkRequest expirationWorkRequest = new PeriodicWorkRequest.Builder(TodoExpirationWorker.class, 15, TimeUnit.MINUTES)
+                .build();
+        WorkManager.getInstance(requireContext()).enqueue(expirationWorkRequest);
 
         ItemTouchHelper.SimpleCallback itemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -88,20 +101,24 @@ public class TodoFragment extends Fragment {
         new ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recyclerView);
 
         viewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication())).get(TodoViewModel.class);
-        int noteId = getArguments() != null ? getArguments().getInt("noteId", -1) : -1;
-        if (noteId == -1) {
+        currentNoteId = getArguments() != null ? getArguments().getInt("noteId", -1) : -1;
+        if (currentNoteId == -1) {
             viewModel.getAllTodos().observe(getViewLifecycleOwner(), todos -> adapter.setTodos(todos));
         } else {
-            viewModel.getTodosByNoteId(noteId).observe(getViewLifecycleOwner(), todos -> adapter.setTodos(todos));
+            viewModel.getTodosByNoteId(currentNoteId).observe(getViewLifecycleOwner(), todos -> adapter.setTodos(todos));
         }
 
-        view.findViewById(R.id.fab_add_task).setOnClickListener(v -> showAddTodoDialog(noteId));
+        // Add filter toggle (optional UI element, e.g., a button or menu)
+        view.findViewById(R.id.fab_add_task).setOnClickListener(v -> showAddTodoDialog(currentNoteId));
 
         adapter.setOnInteractionListener(new TodoAdapter.OnTodoInteractionListener() {
             @Override
             public void onCheckChanged(TodoItem todo) {
                 viewModel.update(todo);
-                showAnimationAndAlert(todo.isCompleted());
+                if (!animatedTodoIds.contains(todo.getId())) {
+                    showAnimationAndAlert(todo.isCompleted(), false);
+                    animatedTodoIds.add(todo.getId());
+                }
             }
 
             @Override
@@ -132,7 +149,7 @@ public class TodoFragment extends Fragment {
         Button buttonCancel = dialogView.findViewById(R.id.button_cancel);
 
         TodoItem todo = new TodoItem();
-        todo.setNoteId(noteId == -1 ? 0 : noteId);
+        todo.setNoteId(noteId == -1 ? null : noteId);
 
         textReminder.setOnClickListener(v -> showReminderPicker(todo));
         textTimer.setOnClickListener(v -> showTimerPicker(todo));
@@ -172,8 +189,12 @@ public class TodoFragment extends Fragment {
     private void showTimerPicker(TodoItem todo) {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Set Timer Duration")
-                .setItems(new String[]{"15 min", "30 min", "1 hour"}, (dialog, which) -> {
-                    long duration = which == 0 ? 15 * 60 * 1000 : which == 1 ? 30 * 60 * 1000 : 60 * 60 * 1000;
+                .setItems(new String[]{"5 min", "10 min", "15 min", "30 min", "1 hour"}, (dialog, which) -> {
+                    long duration = which == 0 ? 5 * 60 * 1000  // 5 minutes
+                            : which == 1 ? 10 * 60 * 1000  // 10 minutes
+                            : which == 2 ? 15 * 60 * 1000  // 15 minutes
+                            : which == 3 ? 30 * 60 * 1000  // 30 minutes
+                            : 60 * 60 * 1000;
                     todo.setTimerDuration(duration);
                     startTimer(todo);
                     viewModel.update(todo);
@@ -186,7 +207,6 @@ public class TodoFragment extends Fragment {
             if (alarmManager.canScheduleExactAlarms()) {
                 scheduleExactAlarm(todo);
             } else {
-                // Prompt user to grant permission (Android 13+)
                 Intent intent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
                 startActivity(intent);
                 Snackbar.make(requireView(), "Please enable exact alarms for reminders", Snackbar.LENGTH_LONG).show();
@@ -216,21 +236,23 @@ public class TodoFragment extends Fragment {
     private void startTimer(TodoItem todo) {
         new CountDownTimer(todo.getTimerDuration(), 1000) {
             @Override
-            public void onTick(long millisUntilFinished) {}
+            public void onTick(long millisUntilFinished) {
+            }
 
             @Override
             public void onFinish() {
                 notificationHelper.showNotification(todo.getId(), "Timer Finished", "Time's up for: " + todo.getTask());
+                todo.setCompleted(true);
+                viewModel.update(todo);
+                animatedTodoIds.remove(todo.getId());
+                showAnimationAndAlert(true, false);
             }
         }.start();
     }
 
-    private void showAnimationAndAlert(boolean isCompleted) {
-        showAnimationAndAlert(isCompleted, false);
-    }
-
     private void showAnimationAndAlert(boolean isCompleted, boolean isCreation) {
-        lottieAnimation.setAnimation(isCreation ? R.raw.target : isCompleted ? R.raw.wow : R.raw.crosseyeman);
+        int animationRes = isCreation ? R.raw.target : isCompleted ? R.raw.wow : R.raw.crosseyeman;
+        lottieAnimation.setAnimation(animationRes);
         lottieAnimation.setVisibility(View.VISIBLE);
         lottieAnimation.playAnimation();
         lottieAnimation.addAnimatorListener(new AnimatorListenerAdapter() {
@@ -241,6 +263,6 @@ public class TodoFragment extends Fragment {
         });
 
         String message = isCreation ? "To-Do created!" : isCompleted ? "Task done! ✅" : "Task not done! ❌";
-        Snackbar.make(requireView(), message + " Want to delete todo? Just swipe 🫱 right", Snackbar.LENGTH_LONG).show();
+        Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show();
     }
 }
