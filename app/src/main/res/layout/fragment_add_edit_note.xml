@@ -1,64 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_bg_app"
-    android:padding="16dp">
+    android:background="@color/dark_background">
 
-    <EditText
-        android:id="@+id/edit_text_title"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="15dp"
-        android:layout_margin="16dp"
-        android:hint="@string/titleEdit"
-        android:inputType="text"
-        android:textAllCaps="true"
-        android:textColorHint="@color/hint_txt_clr"
-        android:textColor="@color/primary_text"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:textAlignment="inherit"
-        android:background="@drawable/bg_corner"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-
-    <ScrollView
-        android:layout_margin="8dp"
-        android:id="@+id/scroll_view"
-        android:layout_below="@+id/edit_text_title"
-        android:layout_above="@id/button_save"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_corner"
-        android:elevation="4dp"
-        android:fillViewport="true">
-
-
-
-            <EditText
-                android:id="@+id/edit_text_description"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/title_input_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:hint="@string/descriptionEdit"
-                android:inputType="textMultiLine"
-                android:textColorHint="@color/hint_txt_clr"
-                android:textColor="@color/primary_text"
-                android:textSize="16sp"
-                android:gravity="top"/>
+                android:layout_marginBottom="16dp"
+                android:hint="@string/note_title"
+                app:boxStrokeColor="@color/gradient_start"
+                app:hintTextColor="@color/gradient_start">
 
-    </ScrollView>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_medium"
+                    android:inputType="textCapSentences"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/button_save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:backgroundTint="@color/ripple_color"
-        android:layout_marginTop="20dp"
-        android:text="@string/save" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/description_input_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/note_description"
+                app:boxStrokeColor="@color/gradient_start"
+                app:hintTextColor="@color/gradient_start">
 
-</RelativeLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_light"
+                    android:gravity="top|start"
+                    android:inputType="textMultiLine"
+                    android:minLines="10"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_cancel"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/cancel"
+                    android:textColor="@color/white"
+                    app:strokeColor="@color/gradient_start" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/gradient_start"
+                    android:text="@string/save"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

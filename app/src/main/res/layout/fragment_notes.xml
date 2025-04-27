@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/light_bg_app">
+    android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -12,9 +11,10 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:padding="8dp"
-        android:backgroundTint="@color/light_bg_app"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+    <!-- Main FAB -->
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/add_fab"
         android:layout_width="wrap_content"
@@ -22,82 +22,133 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
-        app:elevation="4dp"
-        android:backgroundTint="@color/bg_tint_btn"
+        android:backgroundTint="@color/gradient_start"
+        android:text="@string/actions"
+        android:textColor="@color/white"
         app:icon="@drawable/baseline_add_24"
-        android:text="@string/actions" />
+        app:iconTint="@color/white"
+        app:elevation="6dp" />
 
+    <!-- FAB for adding note -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_note"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/add_fab"
         android:layout_alignEnd="@id/add_fab"
-        android:layout_marginBottom="24dp"
-        android:backgroundTint="@color/bg_tint_btn"
-        android:importantForAccessibility="no"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#E91E63"
+        android:contentDescription="@string/add_new_note"
         app:fabSize="normal"
-        app:srcCompat="@drawable/baseline_note_add_24" />
+        app:tint="@color/white"
+        app:srcCompat="@drawable/baseline_note_add_24"
+        app:borderWidth="0dp" />
 
-    <TextView
-        android:id="@+id/add_note_text"
+    <!-- Note label -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/note_label_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/fab_add_note"
         android:layout_alignBottom="@id/fab_add_note"
         android:layout_marginEnd="8dp"
-        android:textColor="@color/primary_text"
         android:layout_toStartOf="@id/fab_add_note"
-        android:gravity="center_vertical"
-        android:text="@string/add_new_note" />
+        app:cardBackgroundColor="#E91E63"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp">
 
+        <TextView
+            android:id="@+id/add_note_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp"
+            android:text="@string/add_new_note"
+            android:textColor="@color/white" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- FAB for adding todo -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_todo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/fab_add_note"
         android:layout_alignEnd="@id/fab_add_note"
-        android:layout_marginBottom="24dp"
-        android:backgroundTint="@color/bg_tint_btn"
-        android:importantForAccessibility="no"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#9C27B0"
+        android:contentDescription="@string/add_to_do"
         app:fabSize="normal"
-        app:srcCompat="@drawable/baseline_add_task_24" />
+        app:tint="@color/white"
+        app:srcCompat="@drawable/baseline_add_task_24"
+        app:borderWidth="0dp" />
 
-    <TextView
-        android:id="@+id/add_todo_text"
+    <!-- Todo label -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/todo_label_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/fab_add_todo"
         android:layout_alignBottom="@id/fab_add_todo"
         android:layout_marginEnd="8dp"
-        android:textColor="@color/primary_text"
         android:layout_toStartOf="@id/fab_add_todo"
-        android:gravity="center_vertical"
-        android:text="@string/add_to_do" />
+        app:cardBackgroundColor="#9C27B0"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp">
 
+        <TextView
+            android:id="@+id/add_todo_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp"
+            android:text="@string/add_to_do"
+            android:textColor="@color/white" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- FAB for adding ledger -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_ledger"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/fab_add_todo"
         android:layout_alignEnd="@id/fab_add_todo"
-        android:layout_marginBottom="24dp"
-        android:backgroundTint="@color/bg_tint_btn"
-        android:importantForAccessibility="no"
-        android:labelFor="@id/add_ledger_text"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#673AB7"
+        android:contentDescription="@string/add_ledger"
         app:fabSize="normal"
-        app:srcCompat="@drawable/accounting" />
+        app:tint="@color/white"
+        app:srcCompat="@drawable/accounting"
+        app:borderWidth="0dp" />
 
-    <TextView
-        android:id="@+id/add_ledger_text"
+    <!-- Ledger label -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/ledger_label_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/fab_add_ledger"
         android:layout_alignBottom="@id/fab_add_ledger"
         android:layout_marginEnd="8dp"
         android:layout_toStartOf="@id/fab_add_ledger"
-        android:textColor="@color/primary_text"
-        android:gravity="center_vertical"
-        android:text="@string/add_ledger" />
+        app:cardBackgroundColor="#673AB7"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp">
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/add_ledger_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp"
+            android:text="@string/add_ledger"
+            android:textColor="@color/white" />
+    </com.google.android.material.card.MaterialCardView></RelativeLayout>
+

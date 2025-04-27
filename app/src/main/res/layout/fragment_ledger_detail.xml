@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_bg_app"
+    android:background="@color/dark_background"
     android:padding="16dp">
 
-    <androidx.cardview.widget.CardView
+    <!-- Title Card -->
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/title_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="6dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/gradient_start"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/text_view_ledger_title"
@@ -23,83 +27,122 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:padding="8dp"
-            android:textColor="@color/primary_text"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:fontFamily="@font/poppins_medium"/>
+    </com.google.android.material.card.MaterialCardView>
 
-    </androidx.cardview.widget.CardView>
-
-    <LinearLayout
-        android:id="@+id/input_layout"
+    <!-- Input Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/input_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:elevation="4dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="6dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/gradient_start"
+        app:layout_constraintTop_toBottomOf="@id/title_card"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_card">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <EditText
-            android:id="@+id/edit_text_date"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="Date (e.g., 2025-04-26)"
-            android:inputType="none"
-            android:padding="8dp"
-            android:textColor="@color/secondary_text"
-            android:textColorHint="@color/hint_txt_clr"
-            android:textSize="16sp" />
+            android:orientation="vertical"
+            android:padding="5dp">
 
-        <EditText
-            android:id="@+id/edit_text_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="Description"
-            android:inputType="text"
-            android:padding="8dp"
-            android:textColor="@color/secondary_text"
-            android:textColorHint="@color/hint_txt_clr"
-            android:textSize="16sp" />
+            <!-- Date Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/date_input_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Date (e.g., 2025-04-26)"
+                app:boxBackgroundMode="outline">
 
-        <EditText
-            android:id="@+id/edit_text_amount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="Amount (e.g., +50.00, -20.50)"
-            android:inputType="text"
-            android:padding="8dp"
-            android:textColor="@color/secondary_text"
-            android:textColorHint="@color/hint_txt_clr"
-            android:textSize="16sp" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/hint_txt_clr"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_light"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/button_add_entry"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/ripple_color"
-            android:text="+ Add"
-            android:textColor="@color/primary_text" />
+            <!-- Description Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/description_input_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Description"
+                app:boxBackgroundMode="outline">
 
-    </LinearLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/hint_txt_clr"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_light"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Amount Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/amount_input_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Amount (e.g., +50.00, -20.50)"
+                app:boxBackgroundMode="outline">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberSigned"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/hint_txt_clr"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_light"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Add Entry Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_add_entry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="4dp"
+                android:text="+ Add"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/gradient_start"
+                app:cornerRadius="12dp"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Recycler View for Entries -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_margin="8dp"
+        android:background="@color/dark_surface"
         android:clipToPadding="false"
-        android:scrollbars="vertical"
-        android:background="@drawable/bg_corner"
+        app:layout_constraintTop_toBottomOf="@id/input_card"
         app:layout_constraintBottom_toTopOf="@id/total_layout"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/input_layout" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:scrollbars="vertical"/>
 
+    <!-- Total Section -->
     <LinearLayout
         android:id="@+id/total_layout"
         android:layout_width="0dp"
@@ -108,26 +151,25 @@
         android:orientation="horizontal"
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/text_view_total_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Total: "
-            android:textColor="@color/secondary_text"
+            android:textColor="@color/white"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/text_view_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=" 0.00"
-            android:textColor="@color/secondary_text"
-            android:textSize="16sp" />
-
+            android:textColor="@color/white"
+            android:textSize="16sp"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

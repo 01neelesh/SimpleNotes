@@ -3,7 +3,6 @@ package com.example.simplenotes.ui.ledger;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.simplenotes.R;
 import com.example.simplenotes.data.local.entity.Ledger;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +58,7 @@ public class LedgerAdapter extends RecyclerView.Adapter<LedgerAdapter.LedgerHold
 
     static class LedgerHolder extends RecyclerView.ViewHolder {
         private final TextView textViewName;
-        private final ImageButton editButton;
+        private final MaterialButton editButton;
 
         public LedgerHolder(@NonNull View itemView) {
             super(itemView);

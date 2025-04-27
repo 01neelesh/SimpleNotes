@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_background">
+
+    <!-- Gradient overlay -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/splash_gradient_background" />
+
+    <!-- Main content container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp">
+
+        <!-- App logo animation container -->
+        <FrameLayout
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginBottom="24dp">
+
+            <!-- Logo background glow effect -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/logo_glow_background" />
+
+            <!-- App logo -->
+            <ImageView
+                android:id="@+id/splash_logo"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_gravity="center"
+                android:src="@mipmap/ic_launcher_foreground"
+                android:contentDescription="@string/app_name" />
+
+            <!-- Circular progress indicator around logo -->
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                app:indicatorColor="@color/accent_pink"
+                app:indicatorSize="180dp"
+                app:trackColor="@android:color/transparent"
+                app:trackThickness="2dp" />
+        </FrameLayout>
+
+        <!-- App name with stylish typography -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:fontFamily="@font/poppins_semibold"
+            android:letterSpacing="0.05"
+            android:layout_marginBottom="8dp" />
+
+        <!-- App tagline -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Organize your thoughts beautifully"
+            android:textColor="@color/secondary_text"
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins_light"
+            android:layout_marginBottom="48dp" />
+
+        <!-- Made with heart container with animation -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="32dp">
+
+            <!-- Made with heart line -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Made with "
+                    android:textColor="@color/secondary_text"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_regular" />
+
+                <!-- Heart icon that can be animated -->
+                <ImageView
+                    android:id="@+id/heart_icon"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_heart"
+                    app:tint="@color/accent_pink" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" by"
+                    android:textColor="@color/secondary_text"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_regular" />
+            </LinearLayout>
+
+            <!-- Your name with gradient text effect -->
+            <TextView
+                android:id="@+id/developer_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your Name"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:fontFamily="@font/poppins_medium"
+                android:letterSpacing="0.05"
+                android:background="@drawable/text_gradient" />
+
+            <!-- Version info -->
+            <TextView
+                android:id="@+id/version_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Version 1.0"
+                android:textColor="@color/hint_txt_clr"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins_light"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

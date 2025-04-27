@@ -29,6 +29,13 @@
         <color name="odd_row">#ffffff</color>
         <color name="calc_highlight">#fff3e0</color>
 
+<!--    Additonal design -->
+    <color name="gradient_start">#d42674</color>
+    <color name="gradient_end">#90278e</color>
+    <color name="dark_background">#121212</color>
+    <color name="dark_surface">#1e1f22</color>
+    <color name="dark_card">#2d2d30</color>
+    <color name="accent_pink">#FF4081</color>
 
 
 

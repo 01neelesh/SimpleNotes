@@ -25,6 +25,7 @@ public class AddEditNoteFragment extends Fragment {
     private NoteViewModel noteViewModel;
     private Note existingNote;
     private boolean isEditMode = false;
+    private boolean shouldSaveOnPause = true; // Flag to control saving on pause
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public class AddEditNoteFragment extends Fragment {
         editTextTitle = view.findViewById(R.id.edit_text_title);
         editTextDescription = view.findViewById(R.id.edit_text_description);
         Button buttonSave = view.findViewById(R.id.button_save);
+        Button buttonCancel = view.findViewById(R.id.button_cancel);
 
         noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
 
@@ -67,13 +69,20 @@ public class AddEditNoteFragment extends Fragment {
             getParentFragmentManager().popBackStack();
         });
 
+        buttonCancel.setOnClickListener(v -> {
+            shouldSaveOnPause = false; // Prevent saving when canceling
+            getParentFragmentManager().popBackStack();
+        });
+
         return view;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        saveNote(false);
+        if (shouldSaveOnPause) {
+            saveNote(false);
+        }
     }
 
     private void saveNote(boolean showToast) {

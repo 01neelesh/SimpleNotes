@@ -70,7 +70,6 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoViewHolder
             checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (listener != null) {
                     TodoItem todo = todos.get(getBindingAdapterPosition());
-                    todo.setCompleted(isChecked);
                     listener.onCheckChanged(todo);
                 }
             });

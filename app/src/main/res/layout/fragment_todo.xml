@@ -3,16 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_bg_app">
+    android:background="@color/dark_background">
 
+    <!-- RecyclerView for displaying tasks or items -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8dp"
         android:clipToPadding="false"
-        android:scrollbars="vertical" />
 
+        android:scrollbars="vertical"
+        android:background="@color/dark_background"/>
+
+    <!-- Lottie Animation View for loading or other animations -->
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_animation"
         android:layout_width="wrap_content"
@@ -22,6 +26,7 @@
         app:lottie_autoPlay="true"
         app:lottie_loop="false" />
 
+    <!-- Floating Action Button for adding new tasks -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_task"
         android:layout_width="wrap_content"
@@ -29,7 +34,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
-        android:backgroundTint="@color/bg_tint_btn"
-        app:srcCompat="@drawable/baseline_add_24" />
+        android:backgroundTint="@color/gradient_start"
+        app:srcCompat="@drawable/baseline_add_24"
+        android:tint="@color/white" />
 
 </RelativeLayout>

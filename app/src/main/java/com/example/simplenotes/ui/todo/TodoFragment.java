@@ -14,7 +14,6 @@ import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -34,9 +33,11 @@ import androidx.work.WorkManager;
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.simplenotes.R;
 import com.example.simplenotes.data.local.entity.TodoItem;
+import com.example.simplenotes.utils.AnimationUtils;
 import com.example.simplenotes.utils.NotificationHelper;
 import com.example.simplenotes.viewmodel.TodoViewModel;
 import com.example.simplenotes.workers.TodoExpirationWorker;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Calendar;
@@ -73,7 +74,7 @@ public class TodoFragment extends Fragment {
                 .build();
         WorkManager.getInstance(requireContext()).enqueue(expirationWorkRequest);
 
-        ItemTouchHelper.SimpleCallback itemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        ItemTouchHelper.SimpleCallback itemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -83,18 +84,11 @@ public class TodoFragment extends Fragment {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getBindingAdapterPosition();
                 TodoItem todo = adapter.getTodoAt(position);
-                if (direction == ItemTouchHelper.LEFT) {
-                    navController.navigate(R.id.action_todoFragment_to_notesFragment);
-                } else if (direction == ItemTouchHelper.RIGHT) {
-                    new AlertDialog.Builder(requireContext())
-                            .setTitle("Delete To-Do")
-                            .setMessage("Are you sure you want to delete this to-do?")
-                            .setPositiveButton("Delete", (dialog, which) -> {
-                                viewModel.delete(todo);
-                                Snackbar.make(view, "To-Do deleted", Snackbar.LENGTH_SHORT).show();
-                            })
-                            .setNegativeButton("Cancel", (dialog, which) -> adapter.notifyItemChanged(position))
-                            .show();
+                if (direction == ItemTouchHelper.RIGHT) {
+                    AnimationUtils.showDeleteAnimation(requireContext(), () -> {
+                        viewModel.delete(todo);
+                        Snackbar.make(view, "To-Do deleted", Snackbar.LENGTH_SHORT).show();
+                    });
                 }
             }
         };
@@ -108,12 +102,12 @@ public class TodoFragment extends Fragment {
             viewModel.getTodosByNoteId(currentNoteId).observe(getViewLifecycleOwner(), todos -> adapter.setTodos(todos));
         }
 
-        // Add filter toggle (optional UI element, e.g., a button or menu)
         view.findViewById(R.id.fab_add_task).setOnClickListener(v -> showAddTodoDialog(currentNoteId));
 
         adapter.setOnInteractionListener(new TodoAdapter.OnTodoInteractionListener() {
             @Override
             public void onCheckChanged(TodoItem todo) {
+                todo.setCompleted(!todo.isCompleted());
                 viewModel.update(todo);
                 if (!animatedTodoIds.contains(todo.getId())) {
                     showAnimationAndAlert(todo.isCompleted(), false);
@@ -145,8 +139,8 @@ public class TodoFragment extends Fragment {
         EditText editTextTask = dialogView.findViewById(R.id.edit_text_task);
         TextView textReminder = dialogView.findViewById(R.id.text_reminder);
         TextView textTimer = dialogView.findViewById(R.id.text_timer);
-        Button buttonSave = dialogView.findViewById(R.id.button_save);
-        Button buttonCancel = dialogView.findViewById(R.id.button_cancel);
+        MaterialButton buttonSave = dialogView.findViewById(R.id.button_save);
+        MaterialButton buttonCancel = dialogView.findViewById(R.id.button_cancel_todo);
 
         TodoItem todo = new TodoItem();
         todo.setNoteId(noteId == -1 ? null : noteId);
@@ -253,8 +247,10 @@ public class TodoFragment extends Fragment {
     private void showAnimationAndAlert(boolean isCompleted, boolean isCreation) {
         int animationRes = isCreation ? R.raw.target : isCompleted ? R.raw.wow : R.raw.crosseyeman;
         lottieAnimation.setAnimation(animationRes);
+        lottieAnimation.setRepeatCount(0); // Play once
         lottieAnimation.setVisibility(View.VISIBLE);
         lottieAnimation.playAnimation();
+        lottieAnimation.setContentDescription(isCreation ? "Target animation for new todo creation" : isCompleted ? "Wow animation for completed task" : "Crosseyeman animation for incomplete task");
         lottieAnimation.addAnimatorListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {

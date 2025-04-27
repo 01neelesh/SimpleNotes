@@ -2,24 +2,30 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="bottom|center"
-    android:background="@android:color/transparent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@android:color/transparent"
+    android:padding="16dp"
+    android:gravity="center_horizontal">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_animation"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="false"
+        android:contentDescription="@string/delete" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:backgroundTint="@android:color/holo_red_light"
-        android:text="Cancel"
-        android:textColor="@android:color/white" />
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/gradient_start"
+        android:text="@string/cancel"
+        android:textColor="@color/white"
+        app:cornerRadius="16dp" />
 
 </LinearLayout>
