@@ -4,8 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/bg_tint_overlay"
+    android:background="@drawable/bg_corner"
     android:orientation="vertical"
+    android:backgroundTint="@color/notes_background"
     android:padding="8dp">
 
     <TextView
@@ -16,20 +17,24 @@
         android:padding="8dp"
         android:maxLines="2"
         android:ellipsize="end"
-        android:textColor="@color/secondary_text"
+        android:textColor="@color/champagne"
+        android:elevation="4dp"
         android:textSize="18sp"
+        android:textAllCaps="true"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/text_view_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="8dp"
         android:maxLines="4"
         android:ellipsize="end"
         android:padding="8dp"
-        android:textColor="@color/secondary_text"
-        android:textSize="14sp" />
+        android:textColor="@color/odd_row"
+        android:textStyle="normal"
+        android:textSize="16sp" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,10 +44,11 @@
 
         <ImageButton
             android:id="@+id/button_delete"
-            android:layout_width="45dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:scaleType="fitCenter"
-            android:src="@android:drawable/ic_menu_delete"
+            android:src="@drawable/baseline_delete_outline_24"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/delete" />
     </LinearLayout>
 

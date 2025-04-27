@@ -11,6 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Ledger Name"
+
+        android:textStyle="bold"
+        android:textSize="18sp"
         android:inputType="text" />
 
     <Button
@@ -19,6 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_marginTop="16dp"
+        android:backgroundTint="@color/ripple_color"
         android:text="Save" />
 
 </LinearLayout>

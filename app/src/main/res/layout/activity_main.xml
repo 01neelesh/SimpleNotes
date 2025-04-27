@@ -15,10 +15,15 @@
         app:titleTextAppearance="@style/TextAppearance.AppCompat.Title"
         app:popupTheme="@style/Theme.AppCompat.DayNight"
         app:layout_constraintStart_toStartOf="parent"
+
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:subtitleTextColor="@color/bg_tint_overlay"
-        app:titleTextColor="@color/primary_text" />
+        app:titleTextColor="@color/primary_text" >
+
+
+    </androidx.appcompat.widget.Toolbar>
+
+
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"

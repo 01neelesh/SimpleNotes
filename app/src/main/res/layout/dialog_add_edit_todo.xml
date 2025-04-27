@@ -4,7 +4,17 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@color/light_bg_app">
+    android:backgroundTint="@color/light_bg_app"
+    android:background="@drawable/bg_corner">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:padding="5dp"
+        android:background="@drawable/bg_corner"
+        >
+
 
     <EditText
         android:id="@+id/edit_text_task"
@@ -16,11 +26,14 @@
         android:textColorHint="@color/hint_txt_clr"
         android:textSize="16sp" />
 
+
+    </androidx.cardview.widget.CardView>
+
     <TextView
         android:id="@+id/text_reminder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_margin="8dp"
         android:text="@string/set_reminder"
         android:textSize="14sp"
         android:textColor="@color/primary_text" />
@@ -29,16 +42,18 @@
         android:id="@+id/text_timer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_margin="8dp"
         android:text="@string/set_timer"
         android:textSize="14sp"
         android:textColor="@color/primary_text" />
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="end"
+        android:gravity="center_horizontal"
         android:layout_marginTop="16dp">
 
         <Button
@@ -53,7 +68,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/save"
-            android:layout_marginRight="2dp"
+            android:layout_marginHorizontal="5dp"
             android:backgroundTint="@color/ripple_color" />
+
     </LinearLayout>
+
 </LinearLayout>

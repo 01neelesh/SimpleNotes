@@ -22,6 +22,7 @@
     <string name="set_reminder">Set Reminder</string>
     <string name="set_timer">Set Timer</string>
     <string name="task">Task</string>
+    <string name="back">Back</string>
 
 
 </resources>

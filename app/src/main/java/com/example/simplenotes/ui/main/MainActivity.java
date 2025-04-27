@@ -7,6 +7,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -18,46 +19,52 @@ public class MainActivity extends AppCompatActivity {
 
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
+    private boolean loadingComplete = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
+
+
+        splashScreen.setKeepOnScreenCondition(() -> !loadingComplete);
+
         setContentView(R.layout.activity_main);
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-//        // Check if user is signed in
-//        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-//        if (account == null) {
-//            startSignInActivity();
-//            return;
-//        }
-
-        // Initialize NavController
-        new Handler(Looper.getMainLooper()).post(() -> {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            // Do any task here, for example:
+            // network call, read database etc.
             try {
-                navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-                appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-                NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-
-            } catch (IllegalArgumentException e) {
-                Log.e("MainActivity", "NavController not found", e);
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
-        });
+            loadingComplete = true;
+        }, 0);
+
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+
+
+            // Initialize NavController
+            new Handler(Looper.getMainLooper()).post(() -> {
+                try {
+                    navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+                    appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+                    NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+
+                } catch (IllegalArgumentException e) {
+                    Log.e("MainActivity", "NavController not found", e);
+                }
+            });
+
+        }
+
+
+        @Override
+        public boolean onSupportNavigateUp () {
+            // Handle navigate up with NavController
+            return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
+        }
+
 
     }
-
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        // Handle navigate up with NavController
-        return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
-    }
-
-//    private void startSignInActivity() {
-//        Intent intent = new Intent(this, SignInActivity.class);
-//        startActivity(intent);
-//        finish();
-//    }
-}

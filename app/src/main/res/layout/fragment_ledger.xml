@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        app:cardCornerRadius="8dp"
+        app:cardCornerRadius="16dp"
         app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,17 +27,22 @@
             android:inputType="text"
             android:padding="16dp"
             android:singleLine="true"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:background="@drawable/bg_corner"
             android:textColor="@color/primary_text"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
     </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
+        android:layout_margin="8dp"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
         android:scrollbars="vertical"
+        android:background="@drawable/bg_corner"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
