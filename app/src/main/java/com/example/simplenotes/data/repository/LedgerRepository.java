@@ -31,7 +31,7 @@ public class LedgerRepository {
     }
 
     public void update(Ledger ledger) {
-        executor.execute(() -> ledgerDao.update(ledger));
+        new Thread(() -> ledgerDao.update(ledger)).start();
     }
 
     public void delete(Ledger ledger) {

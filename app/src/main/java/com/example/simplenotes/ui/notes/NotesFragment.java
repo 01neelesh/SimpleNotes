@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -26,10 +25,13 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.simplenotes.R;
+import com.example.simplenotes.data.local.entity.Ledger;
 import com.example.simplenotes.data.local.entity.Note;
+import com.example.simplenotes.utils.AnimationUtils;
 import com.example.simplenotes.utils.Constants;
 import com.example.simplenotes.utils.GridSpacingItemDecoration;
 import com.example.simplenotes.utils.SwipeGestureDetector;
+import com.example.simplenotes.viewmodel.LedgerViewModel;
 import com.example.simplenotes.viewmodel.NoteViewModel;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -39,6 +41,7 @@ import java.util.ArrayList;
 public class NotesFragment extends Fragment {
     private static final String TAG = "NotesFragment";
     private NoteViewModel noteViewModel;
+    private LedgerViewModel ledgerViewModel;
     private NotesAdapter notesAdapter;
     private GestureDetector gestureDetector;
     private NavController navController;
@@ -54,9 +57,8 @@ public class NotesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notes, container, false);
-//initialize sharedPreferences
 
-        sharedPreferences = requireContext().getSharedPreferences("SimpleNotesPrefs",0);
+        sharedPreferences = requireContext().getSharedPreferences("SimpleNotesPrefs", 0);
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
@@ -79,30 +81,36 @@ public class NotesFragment extends Fragment {
                 Log.d("NotesFragment", "Swiped note ID: " + note.getId() + ", Title: " + note.getTitle());
                 if (direction == ItemTouchHelper.LEFT) {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putInt("lastSwipedNoteId",note.getId());
+                    editor.putInt("lastSwipedNoteId", note.getId());
                     editor.apply();
                     Log.d("NotesFragment", "Stored noteId in SharedPrefs: " + note.getId());
 
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("noteId", note.getId());
-                    Log.d("NotesFragment", "Navigating to LedgerFragment with noteId: " + note.getId());
-                    navController.navigate(R.id.action_notesFragment_to_ledgerFragment, bundle); // Updated to ledgerFragment
+                    // Create ledger and navigate to LedgerDetailFragment
+                    Ledger ledger = new Ledger();
+                    ledger.setName(note.getTitle());
+                    ledger.setNoteId(note.getId());
+                    ledgerViewModel.insert(ledger);
+                    ledgerViewModel.getAllLedgers().observe(getViewLifecycleOwner(), ledgers -> {
+                        if (ledgers != null && !ledgers.isEmpty()) {
+                            Ledger newLedger = ledgers.get(ledgers.size() - 1);
+                            Bundle args = new Bundle();
+                            args.putInt("ledgerId", newLedger.getId());
+                            args.putInt("noteId", newLedger.getNoteId() != null ? newLedger.getNoteId() : -1);
+                            navController.navigate(R.id.action_notesFragment_to_ledgerDetailFragment, args);
+                        }
+                    });
                 } else if (direction == ItemTouchHelper.RIGHT) {
-                    new AlertDialog.Builder(requireContext())
-                            .setTitle("Delete Note")
-                            .setMessage("Are you sure you want to delete this note?")
-                            .setPositiveButton("Delete", (dialog, which) -> {
-                                noteViewModel.delete(note);
-                                Toast.makeText(getContext(), "Note deleted", Toast.LENGTH_SHORT).show();
-                            })
-                            .setNegativeButton("Cancel", (dialog, which) -> notesAdapter.notifyItemChanged(position))
-                            .show();
+                    // Navigate to TodoFragment
+                    Bundle args = new Bundle();
+                    args.putInt("noteId", note.getId());
+                    navController.navigate(R.id.action_notesFragment_to_todoFragment, args);
                 }
             }
         };
         new ItemTouchHelper(itemTouchCallback).attachToRecyclerView(recyclerView);
 
         noteViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication())).get(NoteViewModel.class);
+        ledgerViewModel = new ViewModelProvider(this).get(LedgerViewModel.class);
         noteViewModel.getAllNotes().observe(getViewLifecycleOwner(), notes -> {
             Log.d(TAG, "Observed notes - Count: " + (notes != null ? notes.size() : 0));
             for (Note note : notes) {
@@ -110,7 +118,6 @@ public class NotesFragment extends Fragment {
             }
             notesAdapter.setNotes(notes);
         });
-
 
         addFab = view.findViewById(R.id.add_fab);
         fabAddNote = view.findViewById(R.id.fab_add_note);
@@ -141,7 +148,7 @@ public class NotesFragment extends Fragment {
         fabAddNote.setOnClickListener(v -> {
             hideSubFabs();
             if (navController.getCurrentDestination().getId() == R.id.notesFragment) {
-                noteViewModel.clearCurrentNote(); // Clear current note before adding a new one
+                noteViewModel.clearCurrentNote();
                 Bundle bundle = new Bundle();
                 navController.navigate(R.id.action_notesFragment_to_addEditNoteFragment, bundle);
             } else {
@@ -156,17 +163,15 @@ public class NotesFragment extends Fragment {
             bundle.putInt("noteId", note != null ? note.getId() : -1);
             navController.navigate(R.id.action_notesFragment_to_todoFragment, bundle);
         });
+
         fabAddLedger.setOnClickListener(v -> {
             hideSubFabs();
             Note note = notesAdapter.getSelectedNote();
-            if (note == null) {
-                Toast.makeText(getContext(), "Please select a note first", Toast.LENGTH_SHORT).show();
-                return;
-            }
             Bundle bundle = new Bundle();
-            bundle.putInt("noteId", note.getId());
-            Log.d("NotesFragment", "Navigating to LedgerFragment via FAB with noteId: " + note.getId());
+            bundle.putInt("noteId", note != null ? note.getId() : -1);
+            Log.d("NotesFragment", "Navigating to LedgerFragment with noteId: " + bundle.getInt("noteId"));
             navController.navigate(R.id.action_notesFragment_to_ledgerFragment, bundle);
+            notesAdapter.clearSelection();
         });
 
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
@@ -174,15 +179,10 @@ public class NotesFragment extends Fragment {
         notesAdapter.setOnNoteClickListener(new NotesAdapter.OnNoteClickListener() {
             @Override
             public void onDeleteClick(Note note) {
-                new AlertDialog.Builder(requireContext())
-                        .setTitle("Delete Note")
-                        .setMessage("Are you sure you want to delete this note?")
-                        .setPositiveButton("Delete", (dialog, which) -> {
-                            noteViewModel.delete(note);
-                            Toast.makeText(getContext(), "Note deleted", Toast.LENGTH_SHORT).show();
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .show();
+                AnimationUtils.showDeleteAnimation(requireContext(), () -> {
+                    noteViewModel.delete(note);
+                    Toast.makeText(getContext(), "Note deleted", Toast.LENGTH_SHORT).show();
+                });
             }
 
             @Override

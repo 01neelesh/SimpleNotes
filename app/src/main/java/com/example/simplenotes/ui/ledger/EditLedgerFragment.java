@@ -7,12 +7,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+
 import com.example.simplenotes.R;
 import com.example.simplenotes.data.local.entity.Ledger;
 import com.example.simplenotes.viewmodel.LedgerViewModel;
@@ -22,7 +24,7 @@ public class EditLedgerFragment extends Fragment {
     private NavController navController;
     private EditText editTextLedgerName;
     private int ledgerId;
-    private int noteId;
+    private Integer noteId;
 
     @Nullable
     @Override
@@ -35,7 +37,7 @@ public class EditLedgerFragment extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(LedgerViewModel.class);
         ledgerId = getArguments() != null ? getArguments().getInt("ledgerId", -1) : -1;
-        noteId = getArguments() != null ? getArguments().getInt("noteId", -1) : -1;
+        noteId = getArguments() != null ? getArguments().getInt("noteId", -1) : null;
 
         if (ledgerId != -1) {
             viewModel.getLedgerById(ledgerId).observe(getViewLifecycleOwner(), ledger -> {
@@ -51,15 +53,25 @@ public class EditLedgerFragment extends Fragment {
                 Toast.makeText(requireContext(), "Please enter a ledger name", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (ledgerId != -1 && noteId != -1) {
-                Ledger updatedLedger = new Ledger();
-                updatedLedger.setId(ledgerId);
-                updatedLedger.setName(newName);
-                updatedLedger.setNoteId(noteId);
-                viewModel.insert(updatedLedger); // Room will update if ID exists
+
+            Ledger ledger = new Ledger();
+            ledger.setName(newName);
+            ledger.setNoteId(noteId != -1 ? noteId : null);
+            if (ledgerId != -1) {
+                // Update existing ledger
+                ledger.setId(ledgerId);
+                viewModel.update(ledger);
                 Toast.makeText(requireContext(), "Ledger updated", Toast.LENGTH_SHORT).show();
-                navController.navigateUp();
+            } else {
+                // Create new ledger
+                viewModel.insert(ledger);
+                Toast.makeText(requireContext(), "Ledger created", Toast.LENGTH_SHORT).show();
             }
+
+            // Navigate back to LedgerFragment
+            Bundle args = new Bundle();
+            args.putInt("noteId", noteId != null ? noteId : -1);
+            navController.navigate(R.id.action_editLedgerFragment_to_ledgerFragment, args);
         });
 
         return view;

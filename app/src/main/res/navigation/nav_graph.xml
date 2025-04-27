@@ -11,7 +11,8 @@
         tools:layout="@layout/fragment_onboarding">
         <action
             android:id="@+id/action_onboardingFragment_to_notesFragment"
-            app:destination="@id/notesFragment" />
+            app:destination="@id/notesFragment"
+            />
     </fragment>
 
     <fragment
@@ -28,6 +29,9 @@
         <action
             android:id="@+id/action_notesFragment_to_addEditNoteFragment"
             app:destination="@id/addEditNoteFragment" />
+        <action
+            android:id="@+id/action_notesFragment_to_ledgerDetailFragment"
+            app:destination="@id/ledgerDetailFragment" />
     </fragment>
 
     <fragment
@@ -94,6 +98,11 @@
 
         <action
             android:id="@+id/action_editLedgerFragment_to_ledgerFragment"
-            app:destination="@id/ledgerFragment" />
+            app:destination="@id/ledgerFragment"
+            app:popUpTo="@id/ledgerFragment"
+            app:popUpToInclusive="true" />
+            />
+
+
     </fragment>
 </navigation>

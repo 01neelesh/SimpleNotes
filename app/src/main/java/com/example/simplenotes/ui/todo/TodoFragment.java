@@ -242,10 +242,10 @@ public class TodoFragment extends Fragment {
             @Override
             public void onFinish() {
                 notificationHelper.showNotification(todo.getId(), "Timer Finished", "Time's up for: " + todo.getTask());
-                todo.setCompleted(true);
+                todo.setCompleted(false);
                 viewModel.update(todo);
                 animatedTodoIds.remove(todo.getId());
-                showAnimationAndAlert(true, false);
+                showAnimationAndAlert(false, false);
             }
         }.start();
     }

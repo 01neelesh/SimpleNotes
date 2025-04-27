@@ -1,17 +1,17 @@
 package com.example.simplenotes.ui.ledger;
 
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.simplenotes.R;
 import com.example.simplenotes.data.local.entity.Ledger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +21,7 @@ public class LedgerAdapter extends RecyclerView.Adapter<LedgerAdapter.LedgerHold
 
     public interface OnLedgerClickListener {
         void onLedgerClick(Ledger ledger);
+        void onEditClick(Ledger ledger);
     }
 
     public LedgerAdapter(OnLedgerClickListener listener) {
@@ -38,15 +39,7 @@ public class LedgerAdapter extends RecyclerView.Adapter<LedgerAdapter.LedgerHold
     @Override
     public void onBindViewHolder(@NonNull LedgerHolder holder, int position) {
         Ledger currentLedger = ledgers.get(position);
-        holder.textViewName.setText(currentLedger.getName());
-        holder.itemView.setOnClickListener(v -> listener.onLedgerClick(currentLedger));
-        holder.editButton.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(holder.itemView);
-            Bundle args = new Bundle();
-            args.putInt("ledgerId", currentLedger.getId());
-            args.putInt("noteId", currentLedger.getNoteId());
-            navController.navigate(R.id.action_ledgerFragment_to_editLedgerFragment, args);
-        });
+        holder.bind(currentLedger, listener);
     }
 
     @Override
@@ -71,6 +64,12 @@ public class LedgerAdapter extends RecyclerView.Adapter<LedgerAdapter.LedgerHold
             super(itemView);
             textViewName = itemView.findViewById(R.id.text_view_name);
             editButton = itemView.findViewById(R.id.button_edit);
+        }
+
+        public void bind(Ledger ledger, OnLedgerClickListener listener) {
+            textViewName.setText(ledger.getName() != null && !ledger.getName().isEmpty() ? ledger.getName() : "Untitled");
+            itemView.setOnClickListener(v -> listener.onLedgerClick(ledger));
+            editButton.setOnClickListener(v -> listener.onEditClick(ledger));
         }
     }
 }

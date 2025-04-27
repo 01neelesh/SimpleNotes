@@ -62,8 +62,15 @@ public class LedgerViewModel extends AndroidViewModel {
         repository.insert(ledger);
     }
 
+    public void update(Ledger ledger) {
+        repository.update(ledger);
+    }
+
     public void insert(LedgerEntry entry) {
         repository.insert(entry);
+    }
+    public void update(LedgerEntry entry) {
+        repository.update(entry);
     }
 
     public void delete(LedgerEntry entry) {

@@ -6,10 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.simplenotes.R;
 import com.example.simplenotes.data.local.entity.Note;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +21,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     private List<Note> notes = new ArrayList<>();
     private OnNoteClickListener onNoteClickListener;
     private int selectedPosition = RecyclerView.NO_POSITION;
+    private Note selectedNote = null;
 
     public interface OnNoteClickListener {
         void onDeleteClick(Note note);
@@ -49,7 +53,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
         Note currentNote = notes.get(position);
         Log.d(TAG, "Binding note - Position: " + position + ", Title: " + currentNote.getTitle() + ", Description: " + currentNote.getDescription());
-        holder.bind(currentNote);
+        holder.bind(currentNote, position == selectedPosition);
     }
 
     @Override
@@ -72,8 +76,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
 
     public Note getSelectedNote() {
         if (selectedPosition != RecyclerView.NO_POSITION && selectedPosition < notes.size()) {
-            return notes.get(selectedPosition);
+            selectedNote = notes.get(selectedPosition); // Update selectedNote for consistency
+            return selectedNote;
         }
+        selectedNote = null; // Clear if invalid
         return null;
     }
 
@@ -82,6 +88,15 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             return notes.get(position);
         }
         return null;
+    }
+
+    public void clearSelection() {
+        if (selectedPosition != RecyclerView.NO_POSITION) {
+            int prevSelected = selectedPosition;
+            selectedPosition = RecyclerView.NO_POSITION;
+            selectedNote = null;
+            notifyItemChanged(prevSelected); // Update UI to remove selection
+        }
     }
 
     class NoteViewHolder extends RecyclerView.ViewHolder {
@@ -98,7 +113,13 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             itemView.setOnClickListener(v -> {
                 int position = getBindingAdapterPosition();
                 if (position != RecyclerView.NO_POSITION && onNoteClickListener != null) {
+                    int prevSelected = selectedPosition;
                     selectedPosition = position;
+                    selectedNote = notes.get(position);
+                    if (prevSelected != RecyclerView.NO_POSITION) {
+                        notifyItemChanged(prevSelected); // Update previous selection
+                    }
+                    notifyItemChanged(position); // Update new selection
                     onNoteClickListener.onNoteClick(notes.get(position));
                 }
             });
@@ -111,11 +132,14 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             });
         }
 
-        public void bind(Note note) {
+        public void bind(Note note, boolean isSelected) {
             textViewTitle.setText(note.getTitle() != null && !note.getTitle().isEmpty() ? note.getTitle() : "Untitled");
             String description = note.getDescription() != null ? note.getDescription() : "";
             textViewDescription.setText(description);
             Log.d(TAG, "Bound description to TextView: " + description);
+
+            // Add visual feedback for selection
+//            itemView.setBackgroundColor(isSelected ? ContextCompat.getColor(itemView.getContext(), R.color.cherry_blossom_pink) : ContextCompat.getColor(itemView.getContext(), android.R.color.transparent));
         }
     }
 }

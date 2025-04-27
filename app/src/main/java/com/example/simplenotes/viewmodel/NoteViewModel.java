@@ -51,6 +51,10 @@ public class NoteViewModel extends AndroidViewModel {
         return insertedNoteId;
     }
 
+    public LiveData<Note> getNoteById(int id) {
+        return repository.getNoteById(id);
+    }
+
     public void setCurrentNote(Note note) {
         currentNote.setValue(note);
     }
