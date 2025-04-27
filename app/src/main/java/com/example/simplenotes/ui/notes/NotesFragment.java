@@ -138,9 +138,15 @@ public class NotesFragment extends Fragment {
 
         fabAddNote.setOnClickListener(v -> {
             hideSubFabs();
-            Bundle bundle = new Bundle();
-            navController.navigate(R.id.action_notesFragment_to_addEditNoteFragment, bundle);
+            if (navController.getCurrentDestination().getId() == R.id.notesFragment) {
+                Bundle bundle = new Bundle();
+                navController.navigate(R.id.action_notesFragment_to_addEditNoteFragment, bundle);
+            } else {
+                // Log or handle the case where navigation isn't possible
+                Toast.makeText(requireContext(), "Please wait, loading notes...", Toast.LENGTH_SHORT).show();
+            }
         });
+
         fabAddTodo.setOnClickListener(v -> {
             hideSubFabs();
             Bundle bundle = new Bundle();

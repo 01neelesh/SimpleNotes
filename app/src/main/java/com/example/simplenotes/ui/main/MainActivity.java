@@ -1,9 +1,10 @@
 package com.example.simplenotes.ui.main;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
+import android.view.ViewTreeObserver;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -26,45 +27,60 @@ public class MainActivity extends AppCompatActivity {
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
 
+        SharedPreferences prefs = getSharedPreferences("SimpleNotesPrefs", MODE_PRIVATE);
+        boolean isFirstLaunch = prefs.getBoolean("isFirstLaunch", true);
 
-        splashScreen.setKeepOnScreenCondition(() -> !loadingComplete);
+        // Set splash screen condition
+        if (isFirstLaunch) {
+            // First launch: Skip splash delay, go straight to onboarding
+            loadingComplete = true;
+        } else {
+            // Subsequent launches: Show splash screen for 2 seconds
+            splashScreen.setKeepOnScreenCondition(() -> !loadingComplete);
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                loadingComplete = true;
+                navigateToNotesIfNotFirstLaunch();
+            }, 2000); // 2-second delay
+        }
 
         setContentView(R.layout.activity_main);
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            // Do any task here, for example:
-            // network call, read database etc.
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            loadingComplete = true;
-        }, 0);
 
-            Toolbar toolbar = findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
+        // Delay NavController setup until view is ready
+        final ViewTreeObserver viewTreeObserver = findViewById(R.id.nav_host_fragment).getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment);
+                appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+                NavigationUI.setupActionBarWithNavController(MainActivity.this, navController, appBarConfiguration);
 
-            // Initialize NavController
-            new Handler(Looper.getMainLooper()).post(() -> {
-                try {
-                    navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-                    appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-                    NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+                // Remove the listener using a fresh ViewTreeObserver
+                findViewById(R.id.nav_host_fragment).getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                } catch (IllegalArgumentException e) {
-                    Log.e("MainActivity", "NavController not found", e);
+                // Navigate if not first launch, now that NavController is ready
+                if (!prefs.getBoolean("isFirstLaunch", true)) {
+                    navigateToNotesIfNotFirstLaunch();
                 }
-            });
-
-        }
-
-
-        @Override
-        public boolean onSupportNavigateUp () {
-            // Handle navigate up with NavController
-            return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
-        }
-
-
+            }
+        });
     }
+
+    private void navigateToNotesIfNotFirstLaunch() {
+        SharedPreferences prefs = getSharedPreferences("SimpleNotesPrefs", MODE_PRIVATE);
+        boolean isFirstLaunch = prefs.getBoolean("isFirstLaunch", true);
+        if (!isFirstLaunch && navController != null) {
+            // Only navigate if we're not already on notesFragment
+            if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.notesFragment) {
+                navController.navigate(R.id.action_onboardingFragment_to_notesFragment);
+            }
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        return navController != null && NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
+    }
+}

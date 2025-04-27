@@ -2,7 +2,17 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/notesFragment">
+    app:startDestination="@id/onboardingFragment">
+
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="com.example.simplenotes.ui.onboarding.OnboardingFragment"
+        android:label="Onboarding"
+        tools:layout="@layout/fragment_onboarding">
+        <action
+            android:id="@+id/action_onboardingFragment_to_notesFragment"
+            app:destination="@id/notesFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/notesFragment"
@@ -15,11 +25,9 @@
         <action
             android:id="@+id/action_notesFragment_to_ledgerFragment"
             app:destination="@id/ledgerFragment" />
-        <!-- Add more actions if necessary -->
         <action
             android:id="@+id/action_notesFragment_to_addEditNoteFragment"
             app:destination="@id/addEditNoteFragment" />
-        <!-- Add more actions if necessary -->
     </fragment>
 
     <fragment
@@ -27,7 +35,6 @@
         android:name="com.example.simplenotes.ui.notes.AddEditNoteFragment"
         android:label="Add Edit"
         tools:layout="@layout/fragment_add_edit_note">
-
         <action
             android:id="@+id/action_addEditNoteFragment_to_notesFragment"
             app:destination="@id/notesFragment" />
@@ -44,7 +51,6 @@
         <action
             android:id="@+id/action_todoFragment_to_ledgerFragment"
             app:destination="@id/ledgerFragment" />
-        <!-- Add more actions if necessary -->
     </fragment>
 
     <fragment
@@ -70,10 +76,12 @@
         android:id="@+id/ledgerDetailFragment"
         android:name="com.example.simplenotes.ui.ledger.LedgerDetailFragment"
         tools:layout="@layout/fragment_ledger_detail">
-
         <action
             android:id="@+id/action_ledgerDetailFragment_to_ledgerFragment"
             app:destination="@id/ledgerFragment" />
+        <action
+            android:id="@+id/action_ledgerDetailFragment_to_editLedgerFragment"
+            app:destination="@id/editLedgerFragment" />
     </fragment>
 
     <fragment
@@ -81,8 +89,11 @@
         android:name="com.example.simplenotes.ui.ledger.EditLedgerFragment"
         tools:layout="@layout/fragment_edit_ledger">
         <action
+            android:id="@+id/action_addEditNoteFragment_to_ledgerDetailsFragment"
+            app:destination="@id/ledgerDetailFragment" />
+
+        <action
             android:id="@+id/action_editLedgerFragment_to_ledgerFragment"
             app:destination="@id/ledgerFragment" />
     </fragment>
-
 </navigation>
