@@ -1,106 +1,52 @@
 
-# SimpleNotes App 📝
-A modern Android application built with Google Sign-In, SQLite (Room), Fragments, and RecyclerView to help users create, manage, and organize notes. This project demonstrates essential concepts like user authentication, database management, and dynamic user interface handling with fragments.
+# SimpleNotes Android App
 
-## Table of Contents
-- [ Features ](#desc)
-- [ Technologies ](#usage)
-- [ Setup & Installation ](#setupIntallation)
-- [App Walkthrough](#appWalkthrough)
-    - [Login Screen   ](#login_screen)
-    - [Notes Management. ](#notesMgmt)
-- [ScreenShots](#screenShots)
-- [Contributing ](#contributing)
-- [License  ](#license)
+[![Download APK](https://img.shields.io/badge/Download-APK-blue)](https://drive.google.com/file/d/1gGpuZcwT39GnXIeQ4EVjc_YutV2SzlGI/view?usp=sharing)
 
-<a name="desc"></a>
-## Features 🌟
-- **Google Sign-In:** Authenticate users using Google accounts to ensure secure and simple login.
-- __Note Management:__ Users can: 
-  * Create new notes.
-  * Update existing notes.
-  * Delete notes.
-  * View all notes in a scrollable list.
+## Overview
+**SimpleNotes** is an intuitive Android application designed to help users organize their notes and todos efficiently. With a clean interface and essential features, it’s perfect for personal task management and note-taking on the go.
 
-- **SQLite with Room:**  Persistent storage of notes using Room, an abstraction over SQLite.
-- **RecyclerView Integration:** Dynamically display notes in a list using a RecyclerView for a smooth user experience.
-- **Single Activity Architecture:** The entire app operates within a single activity using fragments for various screens.
+## Features
+- **Create and Edit Notes:** Easily add, edit, and delete notes.
+- **Todo Lists:** Manage tasks with checkboxes for completion tracking.
+- **Splash Screen:** Engaging animated splash screen on app launch.
+- **Onboarding Experience:** Guided onboarding with a ViewPager showcasing welcome, swipe, and feature slides.
+- **Dark Theme:** Optimized for a comfortable reading experience.
+- **Offline Support:** Works seamlessly without an internet connection.
 
-<a name="setupIntallation"></a>
-## Technologies 🛠️
-- **Language:** Java
-- **Authentication:** Google Sign-In API
-- **Database:** SQLite with Room Persistence Library
-- **UI Components:** RecyclerView, Fragments, Single Activity Pattern
-- **Architecture:** MVVM (Model-View-ViewModel) for better code organization
-- **Dependency Management:** Gradle
+## Installation
+### Prerequisites
+- Android Studio installed on your development machine.
 
-<a name="setupIntallation"></a>
-## Getting Started 🚀
+### Steps
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/01neelesh/simplenotes.git
 
-  To Run this project locally, follow the steps below.
-  
- ### Prerequisites
- - Android Studio (latest version recommended)
- - A valid OAuth 2.0 Client ID for Google Sign-In (from Google Cloud Console)
-- A physical device or Android emulator with Google Play Services enabled
+## Open in Android Studio
+- Import the project and sync Gradle files.
 
-<a name="setupIntallation"></a>
-## Setup & Installation
-1. ### Clone the Repository:
+## Build and Run
+- Connect an Android device or emulator.
+- Click "Run" in Android Studio.
 
-```bash
-git clone https://github.com/01neelesh/SimpleNotes.git
-cd SimpleNotesApp
-```
-2. ### Configure Google Sign-In:
-- Download the `google-services.json` file from Firebase or Google Cloud Console and place it in the `app/` directory.
-- Ensure you have added your OAuth 2.0 Client ID in the `strings.xml` file
+## Usage
+- Launch the app to view the splash screen, followed by onboarding on first use.
+- After onboarding, access the notes screen to create or manage your notes and todos.
+- Use the toolbar for navigation and settings (if implemented).
 
-```bash
-<string name="default_web_client_id">YOUR_CLIENT_ID_HERE</string>
-```
+## Screenshots
+- **Splash Screen:** Animated heart pulse and logo rotation.
+- **Onboarding Slides:** Welcome, swipe tutorial, and features overview.
+- **Notes Screen:** Empty notes view with "Observed notes - Count: 0" log.
 
-3. ### Build & Run
-- Open the project in Android Studio.
-- Sync the project with Gradle files.
-- Build and run the app on an emulator or physical device.
+> *(Add actual screenshots here once available.)*
 
-<a name="appWalkthrough"></a>
-## App Walkthrough 📲
+## Videos
+- **Onboarding Demo:** [Watch Onboarding Video](#) *(Upload to YouTube and replace the link here.)*
 
-
-<a name="login_screen"></a>
-### Login Screen
-The app begins with a **Google Sign-In** screen. If the user is not logged in, they are prompted to log in using their Google account. Upon successful login, the app stores the user's email locally using SharedPreferences, enabling seamless authentication across sessions.
-
-<a name="notesMgmt"></a>
-### Notes Management
-After logging in, users are directed to the Notes Management screen where they can view all of their notes in a **RecyclerView**.
-
-- **Add Note:** Users can create a new note by tapping the "Add" button. A dialog box appears where they can input the note's content.
-- **Update Note:** Users can select any note and update its content.
-- **Delete Note:** Each note has a delete option, allowing the user to remove notes permanently.
-The app uses **SQLite** for local storage, implemented with **Room**, ensuring that all notes persist between sessions.
-
-<a name="screenShots"></a>
-## Screenshots 📸
-![App Screenshot](https://i.pinimg.com/originals/bb/f1/91/bbf191f07c3d9815f28c0dd8d69c2514.jpg)
-
-<a name="contributing"></a>
-## Contributing 🤝
-
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. If you'd like to contribute to this project, feel free to create a pull request or submit an issue!
-
-### Steps to contribute:
+## Contributing
 1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Make changes and commit (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature-branch`).
-5. Open a pull request.
-
-<a name="license"></a>
-## License 📄
-
-[MIT](https://choosealicense.com/licenses/mit/)
-
+2. Create a feature branch:
+   ```bash
+   git checkout -b feature-name
