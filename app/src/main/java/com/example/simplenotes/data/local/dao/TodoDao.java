@@ -28,6 +28,10 @@ public interface TodoDao {
     @Query("SELECT * FROM todo_table")
     LiveData<List<TodoItem>> getAllTodos();
 
+    @Query("SELECT * FROM todo_table")
+    List<TodoItem> getAllTodosSync();
+
+
     @Query("SELECT * FROM todo_table WHERE id = :id LIMIT 1")
     TodoItem getTodoById(int id);
 

@@ -30,5 +30,13 @@
     <string name="image_desc_welcome">Welcome to Simple Notes!</string>
     <string name="features">Edit ledgers (auto calculation) or manage todos with timers/reminders. Swipe Right to Delete</string>
 
+    <string-array name="motivational_quotes">
+        <item>Keep going! You\'re Stronger than you think! 💪</item>
+        <item>Small steps lead to big wins! Don’t give up! 🚀</item>
+        <item>Let’s get back on track! You’ve got this! 🔥</item>
+        <item>Every moment is a fresh start—seize it! 🌟</item>
+        <item>Believe in yourself—you’re unstoppable! ⚡</item>
+    </string-array>
+
 
 </resources>

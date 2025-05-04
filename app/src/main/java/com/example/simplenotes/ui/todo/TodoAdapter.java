@@ -149,13 +149,12 @@ public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 textViewTask.setPaintFlags(textViewTask.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
             }
 
-            // Show reminder time if set
             if (todo.getReminderTime() > 0) {
                 reminderTimeText.setVisibility(View.VISIBLE);
                 reminderTimeText.setText(DateUtils.formatDateTime(itemView.getContext(), todo.getReminderTime(), DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE));
                 Drawable reminderDrawable = ContextCompat.getDrawable(itemView.getContext(), R.drawable.notification);
                 if (reminderDrawable != null) {
-                    reminderDrawable.setBounds(0, 0, 40, 40); // Set size to 40x40 pixels
+                    reminderDrawable.setBounds(0, 0, 40, 40);
                     reminderDrawable.setTint(ContextCompat.getColor(itemView.getContext(), R.color.accent_pink));
                     reminderTimeText.setCompoundDrawables(reminderDrawable, null, null, null);
                     reminderTimeText.setCompoundDrawablePadding(4);
@@ -165,13 +164,12 @@ public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 reminderTimeText.setCompoundDrawables(null, null, null, null);
             }
 
-            // Show timer duration if set
             if (todo.getTimerDuration() > 0) {
                 timerDurationText.setVisibility(View.VISIBLE);
                 timerDurationText.setText(formatDuration(todo.getTimerDuration()));
                 Drawable timerDrawable = ContextCompat.getDrawable(itemView.getContext(), R.drawable.stopwatch);
                 if (timerDrawable != null) {
-                    timerDrawable.setBounds(0, 0, 40, 40); // Set size to 40x40 pixels
+                    timerDrawable.setBounds(0, 0, 40, 40);
                     timerDrawable.setTint(ContextCompat.getColor(itemView.getContext(), R.color.accent_pink));
                     timerDurationText.setCompoundDrawables(timerDrawable, null, null, null);
                     timerDurationText.setCompoundDrawablePadding(4);
@@ -181,7 +179,6 @@ public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 timerDurationText.setCompoundDrawables(null, null, null, null);
             }
 
-            // Show metadata container if either reminder or timer is set
             itemView.findViewById(R.id.task_metadata_container).setVisibility(
                     todo.getReminderTime() > 0 || todo.getTimerDuration() > 0 ? View.VISIBLE : View.GONE);
         }
@@ -189,7 +186,7 @@ public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private String formatDuration(long duration) {
             long minutes = (duration / 1000) / 60;
             long seconds = (duration / 1000) % 60;
-            return String.format("%dm %ds", minutes, seconds);
+            return String.format("%02d:%02d", minutes, seconds);
         }
     }
 

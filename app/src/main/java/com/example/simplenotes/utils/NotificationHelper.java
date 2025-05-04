@@ -1,5 +1,8 @@
 package com.example.simplenotes.utils;
 
+import static com.example.simplenotes.utils.Constants.CHANNEL_ID;
+import static com.example.simplenotes.utils.Constants.CHANNEL_NAME;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,8 +14,7 @@ import com.example.simplenotes.R;
 import com.example.simplenotes.ui.main.MainActivity;
 
 public class NotificationHelper {
-    private static final String CHANNEL_ID = "SimpleNotesChannel";
-    private static final String CHANNEL_NAME = "Simple Notes Notifications";
+
     private final Context context;
     private final NotificationManager notificationManager;
 
@@ -42,5 +44,13 @@ public class NotificationHelper {
                 .setAutoCancel(true);
 
         notificationManager.notify(id, builder.build());
+    }
+
+    public void cancelNotification(int id) {
+        notificationManager.cancel(id);
+    }
+
+    public void cancelAllNotifications() {
+        notificationManager.cancelAll();
     }
 }

@@ -44,7 +44,10 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -58,7 +61,8 @@ public class TodoFragment extends Fragment {
     private Set<Integer> animatedTodoIds = new HashSet<>();
     private int currentNoteId = -1;
     private SharedPreferences prefs;
-    private TextView pointsTextView;
+    private TextView statsTextView;
+    private Map<Integer, CountDownTimer> timerMap = new HashMap<>();
 
     @Nullable
     @Override
@@ -71,13 +75,12 @@ public class TodoFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         lottieAnimation = view.findViewById(R.id.lottie_animation);
-        pointsTextView = view.findViewById(R.id.points_text_view);
+        statsTextView = view.findViewById(R.id.stats_text_view);
         notificationHelper = new NotificationHelper(requireContext());
         alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
         prefs = requireContext().getSharedPreferences("SimpleNotesPrefs", Context.MODE_PRIVATE);
-        updatePointsDisplay();
+        updateStatsDisplay();
 
-        // Schedule expiration worker
         PeriodicWorkRequest expirationWorkRequest = new PeriodicWorkRequest.Builder(TodoExpirationWorker.class, 15, TimeUnit.MINUTES)
                 .build();
         WorkManager.getInstance(requireContext()).enqueue(expirationWorkRequest);
@@ -94,7 +97,6 @@ public class TodoFragment extends Fragment {
                 TodoItem todo = adapter.getTodoAt(position);
                 if (direction == ItemTouchHelper.RIGHT) {
                     AnimationUtils.showDeleteAnimation(requireContext(), () -> {
-                        // Cancel timer/reminder before deleting
                         cancelTimerAndReminder(todo);
                         viewModel.delete(todo);
                         Snackbar.make(view, "To-Do deleted", Snackbar.LENGTH_SHORT).show();
@@ -120,7 +122,8 @@ public class TodoFragment extends Fragment {
                 todo.setCompleted(!todo.isCompleted());
                 viewModel.update(todo);
                 if (todo.isCompleted()) {
-                    addPoints(10); // Add 10 points for completing a task
+                    recordTaskCompletion();
+                    cancelTimerAndReminder(todo);
                 }
                 if (!animatedTodoIds.contains(todo.getId())) {
                     showAnimationAndAlert(todo.isCompleted(), false);
@@ -155,10 +158,9 @@ public class TodoFragment extends Fragment {
         MaterialButton buttonSave = dialogView.findViewById(R.id.button_save);
         MaterialButton buttonCancel = dialogView.findViewById(R.id.button_cancel_todo);
 
-        // Request focus and show keyboard
         editTextTask.requestFocus();
         InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        imm.showSoftInput(editTextTask, InputMethodManager.SHOW_IMPLICIT);
 
         TodoItem todo = new TodoItem();
         todo.setNoteId(noteId == -1 ? null : noteId);
@@ -176,15 +178,16 @@ public class TodoFragment extends Fragment {
                 viewModel.insert(todo);
                 showAnimationAndAlert(true, true);
                 dialog.dismiss();
-                // Hide keyboard
+                // Hide keyboard reliably
                 imm.hideSoftInputFromWindow(editTextTask.getWindowToken(), 0);
+                editTextTask.clearFocus();
             }
         });
 
         buttonCancel.setOnClickListener(v -> {
             dialog.dismiss();
-            // Hide keyboard
             imm.hideSoftInputFromWindow(editTextTask.getWindowToken(), 0);
+            editTextTask.clearFocus();
         });
 
         dialog.show();
@@ -208,10 +211,10 @@ public class TodoFragment extends Fragment {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Set Timer Duration")
                 .setItems(new String[]{"5 min", "10 min", "15 min", "30 min", "1 hour"}, (dialog, which) -> {
-                    long duration = which == 0 ? 5 * 60 * 1000  // 5 minutes
-                            : which == 1 ? 10 * 60 * 1000  // 10 minutes
-                            : which == 2 ? 15 * 60 * 1000  // 15 minutes
-                            : which == 3 ? 30 * 60 * 1000  // 30 minutes
+                    long duration = which == 0 ? 5 * 60 * 1000
+                            : which == 1 ? 10 * 60 * 1000
+                            : which == 2 ? 15 * 60 * 1000
+                            : which == 3 ? 30 * 60 * 1000
                             : 60 * 60 * 1000;
                     todo.setTimerDuration(duration);
                     startTimer(todo);
@@ -252,21 +255,32 @@ public class TodoFragment extends Fragment {
     }
 
     private void startTimer(TodoItem todo) {
-        new CountDownTimer(todo.getTimerDuration(), 1000) {
+        if (timerMap.containsKey(todo.getId())) {
+            timerMap.get(todo.getId()).cancel();
+            timerMap.remove(todo.getId());
+        }
+
+        CountDownTimer timer = new CountDownTimer(todo.getTimerDuration(), 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                // Update UI with remaining time (handled in TodoAdapter)
+                // Update the todo in the database
+                todo.setTimerDuration(millisUntilFinished);
+                viewModel.update(todo); // This triggers the LiveData observer to update the adapter
             }
 
             @Override
             public void onFinish() {
                 notificationHelper.showNotification(todo.getId(), "Timer Finished", "Time's up for: " + todo.getTask());
                 todo.setCompleted(false);
+                todo.setTimerDuration(0);
                 viewModel.update(todo);
+                timerMap.remove(todo.getId());
                 animatedTodoIds.remove(todo.getId());
-                showAnimationAndAlert(false, false);
+                showAnimationAndAlertWithQuote(false, false);
             }
-        }.start();
+        };
+        timer.start();
+        timerMap.put(todo.getId(), timer);
     }
 
     private void showAnimationAndAlert(boolean isCompleted, boolean isCreation) {
@@ -287,8 +301,31 @@ public class TodoFragment extends Fragment {
         Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show();
     }
 
+    private void showAnimationAndAlertWithQuote(boolean isCompleted, boolean isCreation) {
+        int animationRes = isCreation ? R.raw.target : isCompleted ? R.raw.wow : R.raw.crosseyeman;
+        lottieAnimation.setAnimation(animationRes);
+        lottieAnimation.setRepeatCount(0);
+        lottieAnimation.setVisibility(View.VISIBLE);
+        lottieAnimation.playAnimation();
+        lottieAnimation.setContentDescription(isCreation ? "Target animation for new todo creation" : isCompleted ? "Wow animation for completed task" : "Crosseyeman animation for incomplete task");
+        lottieAnimation.addAnimatorListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                lottieAnimation.setVisibility(View.GONE);
+            }
+        });
+
+        String message;
+        if (!isCompleted && !isCreation) {
+            String[] quotes = getResources().getStringArray(R.array.motivational_quotes);
+            message = quotes[new Random().nextInt(quotes.length)];
+        } else {
+            message = isCreation ? "To-Do created!" : "Task done! ✅";
+        }
+        Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show();
+    }
+
     private void cancelTimerAndReminder(TodoItem todo) {
-        // Cancel alarm for reminder
         if (todo.getReminderTime() > 0) {
             Intent intent = new Intent(requireContext(), ReminderReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
@@ -298,21 +335,53 @@ public class TodoFragment extends Fragment {
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
             );
             alarmManager.cancel(pendingIntent);
+            todo.setReminderTime(0);
         }
-        // Cancel notification
-//        notificationHelper.cancelNotification(todo.getId());
-        // Note: Timer cancellation will be handled by stopping the CountDownTimer (to be implemented)
+
+        if (timerMap.containsKey(todo.getId())) {
+            timerMap.get(todo.getId()).cancel();
+            timerMap.remove(todo.getId());
+            todo.setTimerDuration(0);
+        }
+
+        notificationHelper.cancelNotification(todo.getId());
     }
 
-    private void addPoints(int points) {
-        int currentPoints = prefs.getInt("user_points", 0);
-        currentPoints += points;
-        prefs.edit().putInt("user_points", currentPoints).apply();
-        updatePointsDisplay();
+    private void recordTaskCompletion() {
+        long currentTime = System.currentTimeMillis();
+        long firstCompletionTime = prefs.getLong("first_completion_time", 0);
+        int completedTasks = prefs.getInt("completed_tasks", 0);
+
+        if (firstCompletionTime == 0) {
+            prefs.edit().putLong("first_completion_time", currentTime).apply();
+        }
+
+        completedTasks++;
+        prefs.edit().putInt("completed_tasks", completedTasks).apply();
+        updateStatsDisplay();
     }
 
-    private void updatePointsDisplay() {
-        int points = prefs.getInt("user_points", 0);
-        pointsTextView.setText("Points: " + points);
+    private void updateStatsDisplay() {
+        long firstCompletionTime = prefs.getLong("first_completion_time", 0);
+        int completedTasks = prefs.getInt("completed_tasks", 0);
+
+        if (completedTasks == 0) {
+            statsTextView.setText("Complete your first task to start! 🚀");
+        } else {
+            long currentTime = System.currentTimeMillis();
+            long days = TimeUnit.MILLISECONDS.toDays(currentTime - firstCompletionTime) + 1;
+            String message = String.format("You’ve completed %d task%s in %d day%s! 💪",
+                    completedTasks, completedTasks == 1 ? "" : "s", days, days == 1 ? "" : "s");
+            statsTextView.setText(message);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        for (CountDownTimer timer : timerMap.values()) {
+            timer.cancel();
+        }
+        timerMap.clear();
     }
 }

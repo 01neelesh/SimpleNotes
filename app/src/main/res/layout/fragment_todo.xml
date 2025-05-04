@@ -5,13 +5,13 @@
     android:layout_height="match_parent"
     android:background="@color/dark_background">
 
-    <!-- Points TextView -->
+    <!-- Stats TextView -->
     <TextView
-        android:id="@+id/points_text_view"
+        android:id="@+id/stats_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="Points: 0"
+        android:text="Complete your first task to start! 🚀"
         android:textSize="16sp"
         android:textColor="@color/accent_pink" />
 
@@ -19,8 +19,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/points_text_view"
+        android:layout_height="match_parent"
+        android:layout_below="@id/stats_text_view"
         android:padding="8dp"
         android:clipToPadding="false"
         android:scrollbars="vertical"

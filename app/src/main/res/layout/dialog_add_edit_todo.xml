@@ -36,6 +36,14 @@ android:background="@drawable/ripple_effect"
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <View
+            android:layout_width="40dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/gradient_line"/>
+
+
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_reminder"
             android:layout_width="match_parent"
@@ -68,7 +76,7 @@ android:background="@drawable/ripple_effect"
                     android:layout_height="wrap_content"
                     android:text="@string/set_reminder"
                     android:textSize="16sp"
-                    android:textColor="@color/primary_text" />
+                    android:textColor="@color/hint_txt_clr" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -105,7 +113,7 @@ android:background="@drawable/ripple_effect"
                     android:layout_height="wrap_content"
                     android:text="@string/set_timer"
                     android:textSize="16sp"
-                    android:textColor="@color/primary_text" />
+                    android:textColor="@color/hint_txt_clr" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
