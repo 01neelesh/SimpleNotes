@@ -8,12 +8,14 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -38,6 +40,7 @@ import com.example.simplenotes.utils.NotificationHelper;
 import com.example.simplenotes.viewmodel.TodoViewModel;
 import com.example.simplenotes.workers.TodoExpirationWorker;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Calendar;
@@ -54,6 +57,8 @@ public class TodoFragment extends Fragment {
     private AlarmManager alarmManager;
     private Set<Integer> animatedTodoIds = new HashSet<>();
     private int currentNoteId = -1;
+    private SharedPreferences prefs;
+    private TextView pointsTextView;
 
     @Nullable
     @Override
@@ -66,8 +71,11 @@ public class TodoFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         lottieAnimation = view.findViewById(R.id.lottie_animation);
+        pointsTextView = view.findViewById(R.id.points_text_view);
         notificationHelper = new NotificationHelper(requireContext());
         alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+        prefs = requireContext().getSharedPreferences("SimpleNotesPrefs", Context.MODE_PRIVATE);
+        updatePointsDisplay();
 
         // Schedule expiration worker
         PeriodicWorkRequest expirationWorkRequest = new PeriodicWorkRequest.Builder(TodoExpirationWorker.class, 15, TimeUnit.MINUTES)
@@ -86,6 +94,8 @@ public class TodoFragment extends Fragment {
                 TodoItem todo = adapter.getTodoAt(position);
                 if (direction == ItemTouchHelper.RIGHT) {
                     AnimationUtils.showDeleteAnimation(requireContext(), () -> {
+                        // Cancel timer/reminder before deleting
+                        cancelTimerAndReminder(todo);
                         viewModel.delete(todo);
                         Snackbar.make(view, "To-Do deleted", Snackbar.LENGTH_SHORT).show();
                     });
@@ -109,6 +119,9 @@ public class TodoFragment extends Fragment {
             public void onCheckChanged(TodoItem todo) {
                 todo.setCompleted(!todo.isCompleted());
                 viewModel.update(todo);
+                if (todo.isCompleted()) {
+                    addPoints(10); // Add 10 points for completing a task
+                }
                 if (!animatedTodoIds.contains(todo.getId())) {
                     showAnimationAndAlert(todo.isCompleted(), false);
                     animatedTodoIds.add(todo.getId());
@@ -137,16 +150,21 @@ public class TodoFragment extends Fragment {
         builder.setView(dialogView);
 
         EditText editTextTask = dialogView.findViewById(R.id.edit_text_task);
-        TextView textReminder = dialogView.findViewById(R.id.text_reminder);
-        TextView textTimer = dialogView.findViewById(R.id.text_timer);
+        MaterialCardView cardReminder = dialogView.findViewById(R.id.card_reminder);
+        MaterialCardView cardTimer = dialogView.findViewById(R.id.card_timer);
         MaterialButton buttonSave = dialogView.findViewById(R.id.button_save);
         MaterialButton buttonCancel = dialogView.findViewById(R.id.button_cancel_todo);
+
+        // Request focus and show keyboard
+        editTextTask.requestFocus();
+        InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
         TodoItem todo = new TodoItem();
         todo.setNoteId(noteId == -1 ? null : noteId);
 
-        textReminder.setOnClickListener(v -> showReminderPicker(todo));
-        textTimer.setOnClickListener(v -> showTimerPicker(todo));
+        cardReminder.setOnClickListener(v -> showReminderPicker(todo));
+        cardTimer.setOnClickListener(v -> showTimerPicker(todo));
 
         AlertDialog dialog = builder.create();
 
@@ -158,10 +176,16 @@ public class TodoFragment extends Fragment {
                 viewModel.insert(todo);
                 showAnimationAndAlert(true, true);
                 dialog.dismiss();
+                // Hide keyboard
+                imm.hideSoftInputFromWindow(editTextTask.getWindowToken(), 0);
             }
         });
 
-        buttonCancel.setOnClickListener(v -> dialog.dismiss());
+        buttonCancel.setOnClickListener(v -> {
+            dialog.dismiss();
+            // Hide keyboard
+            imm.hideSoftInputFromWindow(editTextTask.getWindowToken(), 0);
+        });
 
         dialog.show();
     }
@@ -231,6 +255,7 @@ public class TodoFragment extends Fragment {
         new CountDownTimer(todo.getTimerDuration(), 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                // Update UI with remaining time (handled in TodoAdapter)
             }
 
             @Override
@@ -247,7 +272,7 @@ public class TodoFragment extends Fragment {
     private void showAnimationAndAlert(boolean isCompleted, boolean isCreation) {
         int animationRes = isCreation ? R.raw.target : isCompleted ? R.raw.wow : R.raw.crosseyeman;
         lottieAnimation.setAnimation(animationRes);
-        lottieAnimation.setRepeatCount(0); // Play once
+        lottieAnimation.setRepeatCount(0);
         lottieAnimation.setVisibility(View.VISIBLE);
         lottieAnimation.playAnimation();
         lottieAnimation.setContentDescription(isCreation ? "Target animation for new todo creation" : isCompleted ? "Wow animation for completed task" : "Crosseyeman animation for incomplete task");
@@ -260,5 +285,34 @@ public class TodoFragment extends Fragment {
 
         String message = isCreation ? "To-Do created!" : isCompleted ? "Task done! ✅" : "Task not done! ❌";
         Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    private void cancelTimerAndReminder(TodoItem todo) {
+        // Cancel alarm for reminder
+        if (todo.getReminderTime() > 0) {
+            Intent intent = new Intent(requireContext(), ReminderReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    requireContext(),
+                    todo.getId(),
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+            alarmManager.cancel(pendingIntent);
+        }
+        // Cancel notification
+//        notificationHelper.cancelNotification(todo.getId());
+        // Note: Timer cancellation will be handled by stopping the CountDownTimer (to be implemented)
+    }
+
+    private void addPoints(int points) {
+        int currentPoints = prefs.getInt("user_points", 0);
+        currentPoints += points;
+        prefs.edit().putInt("user_points", currentPoints).apply();
+        updatePointsDisplay();
+    }
+
+    private void updatePointsDisplay() {
+        int points = prefs.getInt("user_points", 0);
+        pointsTextView.setText("Points: " + points);
     }
 }

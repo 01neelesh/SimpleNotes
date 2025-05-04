@@ -5,14 +5,24 @@
     android:layout_height="match_parent"
     android:background="@color/dark_background">
 
+    <!-- Points TextView -->
+    <TextView
+        android:id="@+id/points_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Points: 0"
+        android:textSize="16sp"
+        android:textColor="@color/accent_pink" />
+
     <!-- RecyclerView for displaying tasks or items -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/points_text_view"
         android:padding="8dp"
         android:clipToPadding="false"
-
         android:scrollbars="vertical"
         android:background="@color/dark_background"/>
 

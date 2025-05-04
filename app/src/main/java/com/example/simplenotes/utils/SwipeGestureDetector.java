@@ -1,5 +1,8 @@
 package com.example.simplenotes.utils;
 
+import static com.example.simplenotes.utils.Constants.SWIPE_THRESHOLD;
+import static com.example.simplenotes.utils.Constants.SWIPE_VELOCITY_THRESHOLD;
+
 import android.content.Context;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -9,8 +12,7 @@ import androidx.navigation.NavController;
 import com.example.simplenotes.R;
 
 public class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
-    private static final int SWIPE_THRESHOLD = 100;
-    private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
     private final NavController navController;
 
     public SwipeGestureDetector(Context context, NavController navController) {
