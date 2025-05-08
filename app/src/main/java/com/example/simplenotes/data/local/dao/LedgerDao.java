@@ -24,16 +24,18 @@ public interface LedgerDao {
     @Delete
     void delete(Ledger ledger);
 
-    @Query("SELECT * FROM ledger_table WHERE noteId = :noteId")
-    LiveData<List<Ledger>> getLedgersByNoteId(int noteId);
+    @Query("SELECT * FROM ledger_table WHERE noteId = :noteId LIMIT 1")
+    LiveData<Ledger> getLedgerByNoteId(int noteId);
+
+    @Query("SELECT * FROM ledger_table WHERE noteId = :noteId LIMIT 1")
+    Ledger getLedgerByNoteIdSync(int noteId);
 
     @Query("SELECT * FROM ledger_table")
     LiveData<List<Ledger>> getAllLedgers();
 
-    @Query("SELECT * FROM ledger_table WHERE id = :ledgerId ")
+    @Query("SELECT * FROM ledger_table WHERE id = :ledgerId")
     LiveData<Ledger> getLedgerById(int ledgerId);
 
     @Query("SELECT * FROM ledger_entry_table WHERE ledgerId = :ledgerId")
     LiveData<List<LedgerEntry>> getEntriesByLedgerId(int ledgerId);
-
 }

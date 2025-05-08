@@ -15,8 +15,7 @@ import com.example.simplenotes.R;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private static final long SPLASH_DELAY = 3000; // 2 seconds
-    private static final long FADE_OUT_DURATION = 500; // 0.5-second fade-out
+    private static final long SPLASH_DELAY = 2000; // 2 seconds
     private Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
@@ -33,17 +32,13 @@ public class SplashActivity extends AppCompatActivity {
         // Start animations on a separate thread to avoid main thread overload
         new Thread(this::setupAnimations).start();
 
-        // Navigate after delay with fade-out
+        // Navigate after delay without fade-out
         handler.postDelayed(() -> {
-            getWindow().getDecorView().animate()
-                    .alpha(0f)
-                    .setDuration(FADE_OUT_DURATION)
-                    .withEndAction(() -> {
-                        startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                        finish();
-                    }).start();
-        }, SPLASH_DELAY - FADE_OUT_DURATION);
+            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            // Use a simple transition without fade
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+            finish();
+        }, SPLASH_DELAY);
     }
 
     private void setupAnimations() {

@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     app:cardCornerRadius="16dp"
     app:cardElevation="8dp"
-android:background="@drawable/ripple_effect"
+android:background="@drawable/bg_corner"
     app:cardBackgroundColor="@color/dark_surface">
 
     <LinearLayout

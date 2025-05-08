@@ -31,7 +31,7 @@ public class LedgerRepository {
     }
 
     public void update(Ledger ledger) {
-        new Thread(() -> ledgerDao.update(ledger)).start();
+        executor.execute(() -> ledgerDao.update(ledger));
     }
 
     public void delete(Ledger ledger) {
@@ -42,10 +42,13 @@ public class LedgerRepository {
         return ledgerDao.getAllLedgers();
     }
 
-    public LiveData<List<Ledger>> getLedgersByNoteId(int noteId) {
-        return ledgerDao.getLedgersByNoteId(noteId);
+    public LiveData<Ledger> getLedgerByNoteId(int noteId) {
+        return ledgerDao.getLedgerByNoteId(noteId);
     }
 
+    public Ledger getLedgerByNoteIdSync(int noteId) {
+        return ledgerDao.getLedgerByNoteIdSync(noteId);
+    }
 
     public LiveData<Ledger> getLedgerById(int ledgerId) {
         return ledgerDao.getLedgerById(ledgerId);

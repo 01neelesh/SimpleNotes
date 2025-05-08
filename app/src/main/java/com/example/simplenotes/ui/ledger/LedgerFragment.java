@@ -29,6 +29,9 @@ import com.example.simplenotes.viewmodel.LedgerViewModel;
 import com.example.simplenotes.viewmodel.NoteViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LedgerFragment extends Fragment {
     private LedgerViewModel viewModel;
     private LedgerAdapter adapter;
@@ -59,9 +62,6 @@ public class LedgerFragment extends Fragment {
                 args.putInt("noteId", ledger.getNoteId() != null ? ledger.getNoteId() : -1);
                 navController.navigate(R.id.action_ledgerFragment_to_ledgerDetailFragment, args);
             }
-
-
-
 
             @Override
             public void onEditClick(Ledger ledger) {
@@ -98,13 +98,15 @@ public class LedgerFragment extends Fragment {
                 }
             });
 
-            viewModel.getLedgersByNoteId(noteId).observe(getViewLifecycleOwner(), ledgers -> {
-                Log.d("LedgerFragment", "Ledgers fetched by noteId: " + (ledgers != null ? ledgers.size() : 0));
-                if (ledgers != null) {
-                    adapter.setLedgers(ledgers);
+            viewModel.getLedgerByNoteId(noteId).observe(getViewLifecycleOwner(), ledger -> {
+                List<Ledger> ledgers = new ArrayList<>();
+                if (ledger != null) {
+                    ledgers.add(ledger);
+                    Log.d("LedgerFragment", "Ledger fetched by noteId: " + ledger.getId());
                 } else {
-                    Toast.makeText(requireContext(), "No ledgers found for this note", Toast.LENGTH_SHORT).show();
+                    Log.d("LedgerFragment", "No ledger found for noteId: " + noteId);
                 }
+                adapter.setLedgers(ledgers);
             });
         } else {
             viewModel.getAllLedgers().observe(getViewLifecycleOwner(), ledgers -> {
@@ -160,19 +162,24 @@ public class LedgerFragment extends Fragment {
     }
 
     private void createAndNavigate(String title, int noteId) {
-        Ledger ledger = new Ledger();
-        ledger.setName(title);
-        ledger.setNoteId(noteId != -1 ? noteId : null);
-        viewModel.insert(ledger);
-        viewModel.getAllLedgers().observe(getViewLifecycleOwner(), ledgers -> {
-            if (ledgers != null && !ledgers.isEmpty()) {
-                Ledger newLedger = ledgers.get(ledgers.size() - 1);
+        viewModel.getOrCreateLedgerForNote(noteId, title).observe(getViewLifecycleOwner(), ledger -> {
+            if (ledger != null) {
                 Bundle args = new Bundle();
-                args.putInt("ledgerId", newLedger.getId());
-                args.putInt("noteId", newLedger.getNoteId() != null ? newLedger.getNoteId() : -1);
+                args.putInt("ledgerId", ledger.getId());
+                args.putInt("noteId", ledger.getNoteId() != null ? ledger.getNoteId() : -1);
                 editTextTitle.setText("");
                 navController.navigate(R.id.action_ledgerFragment_to_ledgerDetailFragment, args);
-                adapter.setLedgers(ledgers);
+                if (noteId != -1) {
+                    viewModel.getLedgerByNoteId(noteId).observe(getViewLifecycleOwner(), updatedLedger -> {
+                        List<Ledger> ledgers = new ArrayList<>();
+                        if (updatedLedger != null) {
+                            ledgers.add(updatedLedger);
+                        }
+                        adapter.setLedgers(ledgers);
+                    });
+                } else {
+                    viewModel.getAllLedgers().observe(getViewLifecycleOwner(), adapter::setLedgers);
+                }
             }
         });
     }

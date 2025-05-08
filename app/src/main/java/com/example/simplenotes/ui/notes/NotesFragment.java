@@ -25,7 +25,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.simplenotes.R;
-import com.example.simplenotes.data.local.entity.Ledger;
 import com.example.simplenotes.data.local.entity.Note;
 import com.example.simplenotes.utils.AnimationUtils;
 import com.example.simplenotes.utils.Constants;
@@ -85,22 +84,15 @@ public class NotesFragment extends Fragment {
                     editor.apply();
                     Log.d("NotesFragment", "Stored noteId in SharedPrefs: " + note.getId());
 
-                    // Create ledger and navigate to LedgerDetailFragment
-                    Ledger ledger = new Ledger();
-                    ledger.setName(note.getTitle());
-                    ledger.setNoteId(note.getId());
-                    ledgerViewModel.insert(ledger);
-                    ledgerViewModel.getAllLedgers().observe(getViewLifecycleOwner(), ledgers -> {
-                        if (ledgers != null && !ledgers.isEmpty()) {
-                            Ledger newLedger = ledgers.get(ledgers.size() - 1);
+                    ledgerViewModel.getOrCreateLedgerForNote(note.getId(), note.getTitle()).observe(getViewLifecycleOwner(), ledger -> {
+                        if (ledger != null) {
                             Bundle args = new Bundle();
-                            args.putInt("ledgerId", newLedger.getId());
-                            args.putInt("noteId", newLedger.getNoteId() != null ? newLedger.getNoteId() : -1);
+                            args.putInt("ledgerId", ledger.getId());
+                            args.putInt("noteId", ledger.getNoteId() != null ? ledger.getNoteId() : -1);
                             navController.navigate(R.id.action_notesFragment_to_ledgerDetailFragment, args);
                         }
                     });
                 } else if (direction == ItemTouchHelper.RIGHT) {
-                    // Navigate to TodoFragment
                     Bundle args = new Bundle();
                     args.putInt("noteId", note.getId());
                     navController.navigate(R.id.action_notesFragment_to_todoFragment, args);
