@@ -4,6 +4,5 @@
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
         <item name="android:windowFullscreen">true</item>
-        <item name="android:fitsSystemWindows">true</item>
     </style>
 </resources>

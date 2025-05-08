@@ -2,13 +2,10 @@ package com.example.simplenotes.ui.main;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.ViewTreeObserver;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.splashscreen.SplashScreen;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -24,24 +21,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
 
         SharedPreferences prefs = getSharedPreferences("SimpleNotesPrefs", MODE_PRIVATE);
         boolean isFirstLaunch = prefs.getBoolean("isFirstLaunch", true);
-
-        // Set splash screen condition
-        if (isFirstLaunch) {
-            // First launch: Skip splash delay, go straight to onboarding
-            loadingComplete = true;
-        } else {
-            // Subsequent launches: Show splash screen for 2 seconds
-            splashScreen.setKeepOnScreenCondition(() -> !loadingComplete);
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                loadingComplete = true;
-                navigateToNotesIfNotFirstLaunch();
-            }, 2000); // 2-second delay
-        }
 
         setContentView(R.layout.activity_main);
 

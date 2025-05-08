@@ -38,5 +38,12 @@
         <item>Believe in yourself—you’re unstoppable! ⚡</item>
     </string-array>
 
+    <string name="app_tagline">Organize your thoughts beautifully</string>
+    <string name="made_with">Made with </string>
+    <string name="heart_icon_description">Heart icon</string>
+    <string name="by_text"> by</string>
+    <string name="developer_name"> Neelesh </string>
+    <string name="app_version">Version 1.0</string>
+
 
 </resources>

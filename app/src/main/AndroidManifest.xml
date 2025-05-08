@@ -23,6 +23,7 @@
 
         <activity
             android:name=".ui.main.SplashActivity"
+            android:theme="@style/Theme.SimpleNotes.Splash"
             android:exported="true" >
 
             <intent-filter>

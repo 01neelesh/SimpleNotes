@@ -1,7 +1,7 @@
 package com.example.simplenotes.ui.main;
 
 import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,7 +15,7 @@ import com.example.simplenotes.R;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private static final long SPLASH_DELAY = 2000; // 2 seconds
+    private static final long SPLASH_DELAY = 2000;
     private Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
@@ -23,36 +23,37 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        // Preload resources to avoid jank
+        preloadResources();
+        setupAnimations();
+
+        handler.postDelayed(() -> {
+            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            finish();
+        }, SPLASH_DELAY);
+    }
+
+    private void preloadResources() {
         getResources().getDrawable(R.drawable.splash_gradient_bg, null);
         getResources().getDrawable(R.drawable.logo_glow_bg, null);
         getResources().getDrawable(R.drawable.text_gradient, null);
         getResources().getDrawable(R.drawable.heart_icon, null);
-
-        // Start animations on a separate thread to avoid main thread overload
-        new Thread(this::setupAnimations).start();
-
-        // Navigate after delay without fade-out
-        handler.postDelayed(() -> {
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
-            // Use a simple transition without fade
-            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-            finish();
-        }, SPLASH_DELAY);
     }
 
     private void setupAnimations() {
         runOnUiThread(() -> {
             ImageView heartIcon = findViewById(R.id.heart_icon);
             if (heartIcon != null) {
-                ObjectAnimator pulseAnimation = ObjectAnimator.ofPropertyValuesHolder(
-                        heartIcon,
-                        PropertyValuesHolder.ofFloat("scaleX", 1.0f, 1.2f, 1.0f),
-                        PropertyValuesHolder.ofFloat("scaleY", 1.0f, 1.2f, 1.0f)
-                );
-                pulseAnimation.setDuration(800);
-                pulseAnimation.setRepeatCount(ObjectAnimator.INFINITE);
-                pulseAnimation.start();
+                ValueAnimator scaleAnimator = ValueAnimator.ofFloat(1f, 1.2f);
+                scaleAnimator.setDuration(800);
+                scaleAnimator.setRepeatCount(ValueAnimator.INFINITE);
+                scaleAnimator.setRepeatMode(ValueAnimator.REVERSE);
+                scaleAnimator.addUpdateListener(animation -> {
+                    float scale = (float) animation.getAnimatedValue();
+                    heartIcon.setScaleX(scale);
+                    heartIcon.setScaleY(scale);
+                });
+                scaleAnimator.start();
             }
 
             TextView developerName = findViewById(R.id.developer_name);
@@ -67,10 +68,10 @@ public class SplashActivity extends AppCompatActivity {
 
             ImageView splashLogo = findViewById(R.id.splash_logo);
             if (splashLogo != null) {
-                ObjectAnimator rotationAnimation = ObjectAnimator.ofFloat(splashLogo, "rotation", 0f, 360f);
-                rotationAnimation.setDuration(2000);
-                rotationAnimation.setRepeatCount(ObjectAnimator.INFINITE);
-                rotationAnimation.start();
+                ObjectAnimator rotate = ObjectAnimator.ofFloat(splashLogo, "rotation", 0f, 360f);
+                rotate.setDuration(2000);
+                rotate.setRepeatCount(ValueAnimator.INFINITE);
+                rotate.start();
             }
         });
     }
