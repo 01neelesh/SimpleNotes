@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,7 +42,6 @@ import com.example.simplenotes.viewmodel.TodoViewModel;
 import com.example.simplenotes.workers.TodoExpirationWorker;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -99,7 +99,7 @@ public class TodoFragment extends Fragment {
                     AnimationUtils.showDeleteAnimation(requireContext(), () -> {
                         cancelTimerAndReminder(todo);
                         viewModel.delete(todo);
-                        Snackbar.make(view, "To-Do deleted", Snackbar.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "To-Do deleted", Toast.LENGTH_SHORT).show();
                     });
                 }
             }
@@ -230,7 +230,7 @@ public class TodoFragment extends Fragment {
             } else {
                 Intent intent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
                 startActivity(intent);
-                Snackbar.make(requireView(), "Please enable exact alarms for reminders", Snackbar.LENGTH_LONG).show();
+                Toast.makeText(requireContext(), "Please enable exact alarms for reminders", Toast.LENGTH_LONG).show();
             }
         } else {
             scheduleExactAlarm(todo);
@@ -250,7 +250,7 @@ public class TodoFragment extends Fragment {
         try {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, todo.getReminderTime(), pendingIntent);
         } catch (SecurityException e) {
-            Snackbar.make(requireView(), "Cannot set reminder: Exact alarm permission denied", Snackbar.LENGTH_LONG).show();
+            Toast.makeText(requireContext(), "Cannot set reminder: Exact alarm permission denied", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -298,7 +298,7 @@ public class TodoFragment extends Fragment {
         });
 
         String message = isCreation ? "To-Do created!" : isCompleted ? "Task done! ✅" : "Task not done! ❌";
-        Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     private void showAnimationAndAlertWithQuote(boolean isCompleted, boolean isCreation) {
@@ -322,7 +322,7 @@ public class TodoFragment extends Fragment {
         } else {
             message = isCreation ? "To-Do created!" : "Task done! ✅";
         }
-        Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show();
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
     }
 
     private void cancelTimerAndReminder(TodoItem todo) {
