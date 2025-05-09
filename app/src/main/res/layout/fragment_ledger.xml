@@ -37,6 +37,8 @@
                 android:fontFamily="@font/poppins_medium"
                 android:inputType="textCapCharacters"
                 android:imeOptions="actionDone"
+                android:focusableInTouchMode="true"
+                android:focusable="true"
                 android:singleLine="true"
                 android:textColor="@color/white"
                 android:textSize="18sp" />

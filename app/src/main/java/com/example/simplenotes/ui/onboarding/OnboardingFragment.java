@@ -25,7 +25,12 @@ public class OnboardingFragment extends Fragment {
     private LinearLayout dotsLayout;
     private Button btnSkip, btnNext, btnGetStarted;
     private OnboardingAdapter adapter;
-    private int[] layouts = {R.layout.slide_welcome, R.layout.slide_swipe, R.layout.slide_features};
+    // Updated layout references
+    private int[] layouts = {
+            R.layout.slide_welcome,
+            R.layout.slide_swipe,
+            R.layout.slide_features
+    };
     private SharedPreferences prefs;
     private boolean isFirstLaunch;
 

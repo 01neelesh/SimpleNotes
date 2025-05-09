@@ -19,15 +19,16 @@
         android:background="@color/dark_surface"
         android:padding="16dp">
 
-        <!-- Image View -->
-        <ImageView
-            android:id="@+id/image_swipe"
+        <!-- Lottie Animation -->
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_swipe"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:src="@mipmap/ic_launcher_foreground"
+            app:lottie_rawRes="@raw/swiping_card"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
             android:contentDescription="@string/image_desc_swipe"
-            android:layout_marginBottom="24dp"
-            android:scaleType="centerCrop" />
+            android:layout_marginBottom="24dp" />
 
         <!-- Title Text -->
         <TextView
@@ -45,7 +46,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Swipe left on a note for Ledger (e.g., track 'Trip Budget'), swipe right for Todo (e.g., 'Buy groceries')."
+            android:text="Swipe left on a note for Ledger (e.g., track 'Trip Budget'), right for To-Do (e.g., 'Buy groceries'). Swipe right on any item to delete it."
             android:textSize="16sp"
             android:textColor="@color/secondary_text"
             android:gravity="center"

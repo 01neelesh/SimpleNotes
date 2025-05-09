@@ -19,21 +19,22 @@
         android:padding="16dp"
         android:background="@color/dark_surface">
 
-        <!-- Image View -->
-        <ImageView
-            android:id="@+id/image_features"
+        <!-- Lottie Animation -->
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_features"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:src="@mipmap/ic_launcher_foreground"
+            app:lottie_rawRes="@raw/ledger_animation"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
             android:contentDescription="@string/image_desc_features"
-            android:layout_marginBottom="16dp"
-            android:scaleType="centerCrop" />
+            android:layout_marginBottom="16dp" />
 
         <!-- Title Text -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Explore Features!"
+            android:text="Unlock Cool Features!"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@color/white"
@@ -44,7 +45,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/features"
+            android:text="Say goodbye to financial confusion! Our cool ledger feature provides a clear and simple overview of your shared money, making settling up a breeze."
             android:textSize="14sp"
             android:textColor="@color/secondary_text"
             android:gravity="center"

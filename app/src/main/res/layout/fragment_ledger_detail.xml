@@ -29,6 +29,7 @@
             android:padding="8dp"
             android:textColor="@color/white"
             android:textSize="20sp"
+            android:defaultFocusHighlightEnabled="true"
             android:textStyle="bold"
             android:gravity="center"
             android:fontFamily="@font/poppins_medium"/>
